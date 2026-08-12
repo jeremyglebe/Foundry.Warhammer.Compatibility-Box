@@ -1,0 +1,94 @@
+{
+  "wfrp4e-compatibility-box": {
+    "Preview": {
+      "Title": "WFRP4e Compatibility Box"
+    },
+    "Settings": {
+      "Features": {
+        "argonCombatHud": {
+          "Name": "Enable Argon Combat HUD compatibility",
+          "Hint": "Provides WFRP4e panels, actions, movement, weapon sets, and actor configuration for Argon. Requires an enabled Argon - Combat HUD module and a reload when changed."
+        },
+        "paperDoll": {
+          "Name": "Enable Paper Doll compatibility",
+          "Hint": "Synchronizes WFRP4e equipment, validates slots, and adds WFRP4e tooltips for Paper Doll. Requires an enabled Paper Doll module and a reload when changed."
+        }
+      },
+      "ArgonCombatItemPatterns": {
+        "Name": "Argon combat item patterns",
+        "Hint": "Comma, semicolon, or line separated item-name patterns for the HUD Items action menu. Use * as a wildcard, such as *Draught* or *Potion*."
+      }
+    },
+    "SlotTooltip": {
+      "Head": "Head armour",
+      "Cape": "Aesthetic Item",
+      "Body": "Body armour",
+      "Gloves": "Arm armour",
+      "Boots": "Leg armour",
+      "Trinket": "Ready Item",
+      "Pendant": "Amulet",
+      "Ring": "Worn Item",
+      "WristLeft": "Light Source",
+      "WristRight": "Quick Use Item",
+      "MainLeft": "Main hand",
+      "MainRight": "Off hand"
+    },
+    "Argon": {
+      "Panel": {
+        "Actions": "Actions"
+      },
+      "Group": {
+        "Weapons": "Weapons",
+        "Spells": "Spells",
+        "Prayers": "Prayers",
+        "Traits": "Traits",
+        "Skills": "Skills",
+        "Items": "Items"
+      },
+      "Drawer": {
+        "Title": "Tests",
+        "Characteristics": "Characteristics",
+        "Skills": "Skills",
+        "Value": "Value",
+        "Bonus": "Bonus",
+        "Characteristic": "Characteristic",
+        "CharacteristicShort": "Char."
+      },
+      "Portrait": {
+        "Wounds": "Wounds",
+        "Advantage": "Advantage"
+      },
+      "Movement": {
+        "Run": "Run",
+        "Sprint": "Sprint",
+        "Hint": "Move {move}: each bubble is {distance} {units}."
+      },
+      "PortraitConfig": {
+        "Spells": {
+          "Label": "Spells",
+          "All": "All spells",
+          "Memorized": "Memorized and petty spells"
+        },
+        "Skills": {
+          "Label": "Skills",
+          "All": "All skills",
+          "Basic": "Basic skills",
+          "Advanced": "Advanced and grouped skills",
+          "Trained": "Trained skills"
+        },
+        "WeaponSets": {
+          "Label": "Switch WFRP equipment with weapon sets",
+          "Hint": "When enabled, selecting an Argon weapon set equips that set's weapons and unequips weapons from the other Argon sets."
+        }
+      },
+      "Tooltip": {
+        "Damage": "Damage",
+        "Range": "Range",
+        "Target": "Target",
+        "Duration": "Duration",
+        "CastingNumber": "Casting Number",
+        "Total": "Total"
+      }
+    }
+  }
+}
