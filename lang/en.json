@@ -12,6 +12,10 @@
         "paperDoll": {
           "Name": "Enable Paper Doll compatibility",
           "Hint": "Synchronizes WFRP4e equipment, validates slots, and adds WFRP4e tooltips for Paper Doll. Requires an enabled Paper Doll module and a reload when changed."
+        },
+        "paperDollArgonBridge": {
+          "Name": "Enable Paper Doll–Argon equipment bridge",
+          "Hint": "Shows Paper Doll ready and quick-use items on Argon and copies Paper Doll's physical hand slots into the active Argon weapon set. Requires both features and a reload when changed."
         }
       },
       "ArgonCombatItemPatterns": {
@@ -88,6 +92,11 @@
         "Duration": "Duration",
         "CastingNumber": "Casting Number",
         "Total": "Total"
+      }
+    },
+    "PaperDollArgon": {
+      "Panel": {
+        "QuickItems": "Paper Doll Quick Items"
       }
     }
   }
