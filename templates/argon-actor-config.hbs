@@ -2,8 +2,8 @@
   <div class="form-group">
     <label>{{localize "wfrp4e-compatibility-box.Argon.PortraitConfig.Spells.Label"}}</label>
     <div class="form-fields">
-      <select name="flags.enhancedcombathud-wfrp4e.spellVisibility">
-        {{#if (eq flags.enhancedcombathud-wfrp4e.spellVisibility "all")}}
+      <select name="flags.wfrp4e-compatibility-box.spellVisibility">
+        {{#if (eq flags.wfrp4e-compatibility-box.spellVisibility "all")}}
           <option value="all" selected>
             {{localize "wfrp4e-compatibility-box.Argon.PortraitConfig.Spells.All"}}
           </option>
@@ -12,7 +12,7 @@
             {{localize "wfrp4e-compatibility-box.Argon.PortraitConfig.Spells.All"}}
           </option>
         {{/if}}
-        {{#if (eq flags.enhancedcombathud-wfrp4e.spellVisibility "memorized")}}
+        {{#if (eq flags.wfrp4e-compatibility-box.spellVisibility "memorized")}}
           <option value="memorized" selected>
             {{localize "wfrp4e-compatibility-box.Argon.PortraitConfig.Spells.Memorized"}}
           </option>
@@ -28,8 +28,8 @@
   <div class="form-group">
     <label>{{localize "wfrp4e-compatibility-box.Argon.PortraitConfig.Skills.Label"}}</label>
     <div class="form-fields">
-      <select name="flags.enhancedcombathud-wfrp4e.skillVisibility">
-        {{#if (eq flags.enhancedcombathud-wfrp4e.skillVisibility "all")}}
+      <select name="flags.wfrp4e-compatibility-box.skillVisibility">
+        {{#if (eq flags.wfrp4e-compatibility-box.skillVisibility "all")}}
           <option value="all" selected>
             {{localize "wfrp4e-compatibility-box.Argon.PortraitConfig.Skills.All"}}
           </option>
@@ -38,7 +38,7 @@
             {{localize "wfrp4e-compatibility-box.Argon.PortraitConfig.Skills.All"}}
           </option>
         {{/if}}
-        {{#if (eq flags.enhancedcombathud-wfrp4e.skillVisibility "basic")}}
+        {{#if (eq flags.wfrp4e-compatibility-box.skillVisibility "basic")}}
           <option value="basic" selected>
             {{localize "wfrp4e-compatibility-box.Argon.PortraitConfig.Skills.Basic"}}
           </option>
@@ -47,7 +47,7 @@
             {{localize "wfrp4e-compatibility-box.Argon.PortraitConfig.Skills.Basic"}}
           </option>
         {{/if}}
-        {{#if (eq flags.enhancedcombathud-wfrp4e.skillVisibility "advanced")}}
+        {{#if (eq flags.wfrp4e-compatibility-box.skillVisibility "advanced")}}
           <option value="advanced" selected>
             {{localize "wfrp4e-compatibility-box.Argon.PortraitConfig.Skills.Advanced"}}
           </option>
@@ -56,7 +56,7 @@
             {{localize "wfrp4e-compatibility-box.Argon.PortraitConfig.Skills.Advanced"}}
           </option>
         {{/if}}
-        {{#if (eq flags.enhancedcombathud-wfrp4e.skillVisibility "trained")}}
+        {{#if (eq flags.wfrp4e-compatibility-box.skillVisibility "trained")}}
           <option value="trained" selected>
             {{localize "wfrp4e-compatibility-box.Argon.PortraitConfig.Skills.Trained"}}
           </option>
@@ -74,8 +74,8 @@
     <div class="form-fields">
       <input
         type="checkbox"
-        name="flags.enhancedcombathud-wfrp4e.switchEquip"
-        {{checked flags.enhancedcombathud-wfrp4e.switchEquip}}
+        name="flags.wfrp4e-compatibility-box.switchEquip"
+        {{checked flags.wfrp4e-compatibility-box.switchEquip}}
       />
     </div>
     <p class="hint">{{localize "wfrp4e-compatibility-box.Argon.PortraitConfig.WeaponSets.Hint"}}</p>

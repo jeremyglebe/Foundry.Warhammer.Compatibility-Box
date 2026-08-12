@@ -2,7 +2,7 @@
   "id": "wfrp4e-compatibility-box",
   "title": "WFRP4e Compatibility Box",
   "description": "Optional compatibility features and patches for WFRP4e and supported Foundry VTT modules.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "authors": [
     {
       "name": "Jeremy Glebe"
@@ -54,5 +54,5 @@
   ],
   "url": "https://github.com/jeremyglebe/wfrp4e-compatibility-box",
   "manifest": "https://github.com/jeremyglebe/wfrp4e-compatibility-box/releases/latest/download/module.json",
-  "download": "https://github.com/jeremyglebe/wfrp4e-compatibility-box/releases/download/v1.1.0/module.zip"
+  "download": "https://github.com/jeremyglebe/wfrp4e-compatibility-box/releases/download/v1.1.1/module.zip"
 }
