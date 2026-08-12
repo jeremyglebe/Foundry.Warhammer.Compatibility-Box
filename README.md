@@ -1,4 +1,4 @@
-# WFRP4e Compatibility Box
+# Drowsy's WFRP4e Compatibility Box
 
 Optional compatibility features and patches for WFRP4e and supported Foundry VTT modules.
 
@@ -16,7 +16,7 @@ return a not-found response even though this repository already exists.
 ## Compatibility
 
 - Module ID: `wfrp4e-compatibility-box`
-- Current version: `1.1.1`
+- Current version: `1.1.2`
 - Foundry VTT: minimum 14, verified 14
 - Required systems: wfrp4e 9.6.1
 

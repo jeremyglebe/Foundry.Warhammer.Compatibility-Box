@@ -113,7 +113,7 @@ function d(e) {
 }
 //#endregion
 //#region src/module/constants.ts
-var f = "wfrp4e-compatibility-box", fe = "WFRP4e Compatibility Box";
+var f = "wfrp4e-compatibility-box", fe = "Drowsy's WFRP4e Compatibility Box";
 //#endregion
 //#region src/module/integrations/is-module-active.ts
 function p(e) {
