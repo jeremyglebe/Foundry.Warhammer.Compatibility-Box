@@ -98,6 +98,15 @@
       "Panel": {
         "QuickItems": "Paper Doll Quick Items"
       }
+    },
+    "Splatter": {
+      "Configuration": {
+        "Name": "WFRP4e blood preset",
+        "Button": "Apply WFRP4e Preset",
+        "Hint": "Sets the WFRP4e species path, enables automatic blood colors, and adds a flavorful species palette without removing existing Splatter colors.",
+        "Success": "Splatter is configured for WFRP4e.",
+        "Error": "Splatter could not be configured. See the console for details."
+      }
     }
   }
 }
