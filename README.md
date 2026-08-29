@@ -16,7 +16,7 @@ return a not-found response even though this repository already exists.
 ## Compatibility
 
 - Module ID: `wfrp4e-compatibility-box`
-- Current version: `1.1.6`
+- Current version: `1.1.7`
 - Foundry VTT: minimum 14, verified 14
 - Required systems: wfrp4e 9.6.1
 
