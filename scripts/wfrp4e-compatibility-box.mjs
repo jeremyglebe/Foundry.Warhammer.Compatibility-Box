@@ -32,7 +32,7 @@ function s(e, t, n) {
 function c(e) {
 	return e.type === "armour" && e.equipped;
 }
-function l(e) {
+function ee(e) {
 	let t = e.armourPoints, r = n.filter((e) => t[e] > 0);
 	return {
 		coverage: r.length,
@@ -40,8 +40,8 @@ function l(e) {
 		points: r.reduce((e, n) => e + t[n], 0)
 	};
 }
-function u(t) {
-	let n = t.filter(c).map(l);
+function l(t) {
+	let n = t.filter(c).map(ee);
 	return e.flatMap((e) => {
 		let t = n.filter((t) => a(t.item, e) > 0).sort((t, n) => s(e, t, n))[0];
 		return t ? [{
@@ -50,17 +50,17 @@ function u(t) {
 		}] : [];
 	});
 }
-function ee(e, t) {
+function te(e, t) {
 	return e.twoHanded ? "both" : e.offhand ? t === "l" ? "r" : "l" : t;
 }
-function te(e, t) {
+function ne(e, t) {
 	return Number(t.twoHanded) - Number(e.twoHanded) || e.name.localeCompare(t.name) || e.id.localeCompare(t.id);
 }
-function ne(e, n) {
-	let r = e.filter((e) => e.type === "weapon" && e.equipped).sort(te);
+function re(e, n) {
+	let r = e.filter((e) => e.type === "weapon" && e.equipped).sort(ne);
 	return t.flatMap((e) => {
 		let t = e === "MAIN_LEFT" ? "l" : "r", i = r.find((e) => {
-			let r = ee(e, n);
+			let r = te(e, n);
 			return r === "both" || r === t;
 		});
 		return i ? [{
@@ -69,16 +69,16 @@ function ne(e, n) {
 		}] : [];
 	});
 }
-function re(e, t) {
-	return [...u(e), ...ne(e, t)];
+function ie(e, t) {
+	return [...l(e), ...re(e, t)];
 }
 //#endregion
 //#region src/functions/patches/paper-doll/derive-paper-doll-slot-state.ts
-function ie(e) {
+function ae(e) {
 	return Object.fromEntries(Object.entries(e).map(([e, t]) => [e, { ...t }]));
 }
-function ae(n, r, i, a) {
-	let o = ie(n), s = new Map(r.map((e) => [e.slotId, e.uuid]));
+function oe(n, r, i, a) {
+	let o = ae(n), s = new Map(r.map((e) => [e.slotId, e.uuid]));
 	for (let n of [...e, ...t]) {
 		if (!a.has(n)) continue;
 		let e = o[n]?.["0"] ?? null, t = s.get(n) ?? null;
@@ -86,42 +86,42 @@ function ae(n, r, i, a) {
 	}
 	return o;
 }
-function oe(e, t, n) {
-	let r = new Map(t.map((e) => [e.uuid, e])), i = ie(e);
+function se(e, t, n) {
+	let r = new Map(t.map((e) => [e.uuid, e])), i = ae(e);
 	for (let e of Object.values(i)) for (let [t, i] of Object.entries(e)) !i || n.has(i) || r.get(i)?.equipped === !1 && (e[t] = null);
 	return i;
 }
-function se(e, t, n, r, i) {
-	return oe(ae(e, t, n, r), i, n);
+function ce(e, t, n, r, i) {
+	return se(oe(e, t, n, r), i, n);
 }
-function ce(e, t) {
+function le(e, t) {
 	return JSON.stringify(e) === JSON.stringify(t);
 }
 //#endregion
 //#region src/functions/patches/paper-doll/is-paper-doll-slot-state.ts
-function le(e) {
+function ue(e) {
 	return typeof e == "object" && !!e && !Array.isArray(e);
 }
-function ue(e) {
+function de(e) {
 	return /^(0|[1-9]\d*)$/.test(e);
 }
-function de(e) {
+function fe(e) {
 	return e == null || typeof e == "string" && e.length > 0;
 }
-function d(e) {
-	return le(e) && Object.entries(e).every(([e, t]) => e.length > 0 && le(t) && Object.entries(t).every(([e, t]) => ue(e) && de(t)));
+function u(e) {
+	return ue(e) && Object.entries(e).every(([e, t]) => e.length > 0 && ue(t) && Object.entries(t).every(([e, t]) => de(e) && fe(t)));
 }
 //#endregion
 //#region src/module/constants.ts
-var f = "wfrp4e-compatibility-box", fe = "Drowsy's WFRP4e Compatibility Box";
+var d = "wfrp4e-compatibility-box", pe = "Drowsy's WFRP4e Compatibility Box";
 //#endregion
 //#region src/module/integrations/is-module-active.ts
-function p(e) {
+function f(e) {
 	return game?.modules.get(e)?.active === !0;
 }
 //#endregion
 //#region src/module/settings/optional-features.ts
-var m = {
+var p = {
 	argonCombatHud: {
 		settingKey: "argonCombatHudEnabled",
 		targetModuleIds: ["enhancedcombathud"]
@@ -135,34 +135,34 @@ var m = {
 		targetModuleIds: ["fvtt-paper-doll-ui", "enhancedcombathud"]
 	}
 };
-function h(e) {
-	return m[e].targetModuleIds.every((e) => p(e));
+function m(e) {
+	return p[e].targetModuleIds.every((e) => f(e));
 }
 //#endregion
 //#region src/module/settings/is-optional-feature-enabled.ts
-function g(e) {
-	let t = m[e];
-	return h(e) && game?.settings.get("wfrp4e-compatibility-box", t.settingKey) !== !1;
+function h(e) {
+	let t = p[e];
+	return m(e) && game?.settings.get("wfrp4e-compatibility-box", t.settingKey) !== !1;
 }
 //#endregion
 //#region src/functions/patches/paper-doll/equipment-update.ts
-function pe(e) {
+function me(e) {
 	return e.slotId === "MAIN_LEFT" ? "l" : e.slotId === "MAIN_RIGHT" ? "r" : null;
 }
-function me(e, t, n, r) {
+function he(e, t, n, r) {
 	if (t === null) return {};
 	let i = {};
 	if (t || (i["system.equipped.value"] = !0), e?.type !== "weapon") return i;
 	if (!r) throw Error(`Weapon ${e.uuid} requires the actor's main hand.`);
-	let a = pe(n), o = e.twoHanded ? !1 : a ? a !== r : void 0;
+	let a = me(n), o = e.twoHanded ? !1 : a ? a !== r : void 0;
 	return o !== void 0 && e.offhand !== o && (i["system.offhand.value"] = o), i;
 }
-function he(e) {
+function ge(e) {
 	return e === !0 ? { "system.equipped.value": !1 } : {};
 }
 //#endregion
 //#region src/functions/patches/paper-doll/is-item-allowed-in-slot.ts
-function ge(e, t) {
+function _e(e, t) {
 	switch (t) {
 		case "HEAD": return e.armourPoints.head > 0;
 		case "BODY": return e.armourPoints.body > 0;
@@ -171,23 +171,31 @@ function ge(e, t) {
 		default: return !1;
 	}
 }
-function _e(e, t, n) {
-	return n === "MAIN_LEFT" || n === "MAIN_RIGHT" ? t?.type === "weapon" : n === "HEAD" || n === "BODY" || n === "GLOVES" || n === "BOOTS" ? t?.type === "armour" && ge(t, n) : e !== "weapon" && e !== "armour";
+function ve(e, t, n) {
+	return n === "MAIN_LEFT" || n === "MAIN_RIGHT" ? t?.type === "weapon" : n === "HEAD" || n === "BODY" || n === "GLOVES" || n === "BOOTS" ? t?.type === "armour" && _e(t, n) : e !== "weapon" && e !== "armour";
 }
 //#endregion
 //#region src/module/patches/paper-doll/wfrp-runtime-types.ts
-function _(e) {
+var ye = new Set([
+	"character",
+	"npc",
+	"creature"
+]);
+function g(e) {
 	return typeof e == "object" && !!e;
 }
+function _(e) {
+	return g(e) ? typeof e.getFlag == "function" && e.items !== void 0 && typeof e.setFlag == "function" && typeof e.type == "string" && typeof e.uuid == "string" : !1;
+}
 function v(e) {
-	return _(e) ? typeof e.getFlag == "function" && e.items !== void 0 && typeof e.setFlag == "function" && typeof e.type == "string" && typeof e.uuid == "string" : !1;
+	return _(e) && ye.has(e.type);
 }
 function y(e) {
-	return _(e) ? typeof e.id == "string" && typeof e.name == "string" && typeof e.type == "string" && typeof e.update == "function" && typeof e.uuid == "string" : !1;
+	return g(e) ? typeof e.id == "string" && typeof e.name == "string" && typeof e.type == "string" && typeof e.update == "function" && typeof e.uuid == "string" : !1;
 }
 //#endregion
 //#region src/module/patches/paper-doll/wfrp-equipment.ts
-var ve = [
+var be = [
 	"head",
 	"lArm",
 	"rArm",
@@ -195,38 +203,38 @@ var ve = [
 	"rLeg",
 	"body"
 ];
-function ye(e) {
-	if (!_(e.system)) throw Error(`WFRP item ${e.uuid} has no usable system data.`);
+function xe(e) {
+	if (!g(e.system)) throw Error(`WFRP item ${e.uuid} has no usable system data.`);
 	return e.system;
 }
-function be(e, t) {
-	let n = ye(e)[t];
+function Se(e, t) {
+	let n = xe(e)[t];
 	if (n === void 0) return null;
-	if (!_(n) || typeof n.value != "boolean") throw Error(`WFRP item ${e.uuid} has an invalid ${t} field.`);
+	if (!g(n) || typeof n.value != "boolean") throw Error(`WFRP item ${e.uuid} has an invalid ${t} field.`);
 	return n.value;
 }
 function b(e, t) {
-	let n = be(e, t);
+	let n = Se(e, t);
 	if (n === null) throw Error(`WFRP item ${e.uuid} is missing its ${t} field.`);
 	return n;
 }
 function x(e) {
-	return be(e, "equipped");
+	return Se(e, "equipped");
 }
-function xe(e) {
+function Ce(e) {
 	return x(e) !== null;
 }
-function Se(e) {
-	let t = ye(e).AP;
-	if (!_(t)) throw Error(`WFRP armour ${e.uuid} has no usable AP data.`);
-	return Object.fromEntries(ve.map((n) => {
+function we(e) {
+	let t = xe(e).AP;
+	if (!g(t)) throw Error(`WFRP armour ${e.uuid} has no usable AP data.`);
+	return Object.fromEntries(be.map((n) => {
 		let r = t[n];
 		if (typeof r != "number" || !Number.isFinite(r)) throw Error(`WFRP armour ${e.uuid} has an invalid AP.${n} value.`);
 		return [n, r];
 	}));
 }
-function Ce(e) {
-	if (!_(e.system) || !_(e.system.details)) throw Error(`WFRP actor ${e.uuid} has no usable details data.`);
+function Te(e) {
+	if (!g(e.system) || !g(e.system.details)) throw Error(`WFRP actor ${e.uuid} has no usable details data.`);
 	let t = e.system.details.mainHand;
 	if (t !== "l" && t !== "r") throw Error(`WFRP actor ${e.uuid} has an invalid details.mainHand value.`);
 	return t;
@@ -241,7 +249,7 @@ function S(e) {
 	};
 	return e.type === "armour" ? {
 		...t,
-		armourPoints: Se(e),
+		armourPoints: we(e),
 		type: "armour"
 	} : {
 		...t,
@@ -250,98 +258,98 @@ function S(e) {
 		type: "weapon"
 	};
 }
-function we(e, t) {
-	return _e(e.type, S(e), t);
+function Ee(e, t) {
+	return ve(e.type, S(e), t);
 }
-async function Te(e, t, n) {
-	let r = S(t), i = me(r, r?.equipped ?? x(t), n, r?.type === "weapon" ? Ce(e) : null);
+async function De(e, t, n) {
+	let r = S(t), i = he(r, r?.equipped ?? x(t), n, r?.type === "weapon" ? Te(e) : null);
 	Object.keys(i).length && await t.update(i);
 }
-async function Ee(e) {
-	let t = he(S(e)?.equipped ?? x(e));
+async function Oe(e) {
+	let t = ge(S(e)?.equipped ?? x(e));
 	Object.keys(t).length && await e.update(t);
 }
 //#endregion
 //#region src/module/notifications/notify-user.ts
-function De(e, t) {
+function ke(e, t) {
 	t === void 0 ? console.error(e) : console.error(e, t);
 }
-function Oe(e, t) {
-	De(e, t), ui?.notifications?.error(e);
+function C(e, t) {
+	ke(e, t), ui?.notifications?.error(e);
 }
 //#endregion
 //#region src/module/patches/paper-doll/report-paper-doll-error.ts
-function ke(e) {
+function Ae(e) {
 	return e instanceof Error ? e.message : String(e);
 }
-function C(e, t) {
-	Oe(`${fe}: ${e}. ${ke(t)}`, t);
-}
 function w(e, t) {
-	e.catch((e) => C(t, e));
+	C(`${pe}: ${e}. ${Ae(t)}`, t);
+}
+function T(e, t) {
+	e.catch((e) => w(t, e));
 }
 //#endregion
 //#region src/module/patches/paper-doll/synchronize-paper-doll.ts
-var T = "fvtt-paper-doll-ui", E = "slots", D = /* @__PURE__ */ new Map(), O = /* @__PURE__ */ new Set();
-function Ae(e) {
+var E = "fvtt-paper-doll-ui", D = "slots", O = /* @__PURE__ */ new Map(), je = /* @__PURE__ */ new Set();
+function Me(e) {
 	return Object.fromEntries(Object.entries(e).map(([e, t]) => [e, { ...t }]));
 }
-function je(e) {
-	let t = e.getFlag(T, E);
+function Ne(e) {
+	let t = e.getFlag(E, D);
 	if (t === void 0) return {};
-	if (!d(t)) throw Error("Paper Doll's existing slot flag has an invalid shape.");
-	return Ae(t);
+	if (!u(t)) throw Error("Paper Doll's existing slot flag has an invalid shape.");
+	return Me(t);
 }
-function Me() {
-	let n = game?.settings.get(T, "globalConfig"), r = new Set([...e, ...t]);
-	if (_(n) && Object.keys(n).length === 0) return r;
-	if (!_(n) || !_(n.SLOTS)) throw Error("Paper Doll's global slot configuration has an invalid shape.");
+function Pe() {
+	let n = game?.settings.get(E, "globalConfig"), r = new Set([...e, ...t]);
+	if (g(n) && Object.keys(n).length === 0) return r;
+	if (!g(n) || !g(n.SLOTS)) throw Error("Paper Doll's global slot configuration has an invalid shape.");
 	let i = Object.values(n.SLOTS);
-	if (!i.every(_)) throw Error("Paper Doll's global slot configuration contains an invalid column.");
+	if (!i.every(g)) throw Error("Paper Doll's global slot configuration contains an invalid column.");
 	let a = new Set(i.flatMap((e) => Object.keys(e)));
 	return a.size ? a : r;
 }
-function Ne(e) {
-	return D.has(e.uuid);
+function Fe(e) {
+	return O.has(e.uuid);
 }
-function Pe(e) {
-	if (!v(e)) throw Error("Paper Doll synchronization requires a WFRP actor document.");
+function Ie(e) {
+	if (!_(e)) throw Error("Paper Doll synchronization requires a WFRP actor document.");
 }
-function Fe() {
+function Le() {
 	if (!game || game.system.id !== "wfrp4e") throw Error("Paper Doll synchronization is only available in a WFRP4e world.");
 }
-async function Ie(e) {
-	let t = je(e), n = Array.from(e.items), r = n.map(S).filter((e) => e !== null), i = new Set(r.map((e) => e.uuid)), a = n.map((e) => ({
+async function Re(e) {
+	let t = Ne(e), n = Array.from(e.items), r = n.map(S).filter((e) => e !== null), i = new Set(r.map((e) => e.uuid)), a = n.map((e) => ({
 		equipped: x(e),
 		uuid: e.uuid
-	})), o = se(t, re(r, Ce(e)), i, Me(), a);
-	return ce(t, o) ? "unchanged" : (await e.setFlag(T, E, o), "synchronized");
+	})), o = ce(t, ie(r, Te(e)), i, Pe(), a);
+	return le(t, o) ? "unchanged" : (await e.setFlag(E, D, o), "synchronized");
 }
 async function k(e) {
-	Pe(e), Fe();
+	Ie(e), Le();
 	let t = e;
-	if (game.modules.get("fvtt-paper-doll-ui")?.active !== !0 || !g("paperDoll")) return "unavailable";
-	let n = D.get(t.uuid);
+	if (!v(t) || game.modules.get("fvtt-paper-doll-ui")?.active !== !0 || !h("paperDoll")) return "unavailable";
+	let n = O.get(t.uuid);
 	if (n) return await n, k(t);
-	let r = Ie(t).finally(() => {
-		D.get(t.uuid) === r && D.delete(t.uuid);
+	let r = Re(t).finally(() => {
+		O.get(t.uuid) === r && O.delete(t.uuid);
 	});
-	return D.set(t.uuid, r), r;
+	return O.set(t.uuid, r), r;
 }
-function Le(e) {
-	O.has(e.uuid) || (O.add(e.uuid), queueMicrotask(() => {
-		O.delete(e.uuid), w(k(e), `could not synchronize equipped items for ${e.uuid}`);
-	}));
+function ze(e) {
+	v(e) && (je.has(e.uuid) || (je.add(e.uuid), queueMicrotask(() => {
+		je.delete(e.uuid), T(k(e), `could not synchronize equipped items for ${e.uuid}`);
+	})));
 }
-async function Re() {
-	return Fe(), Promise.all(Array.from(game.actors, (e) => k(e)));
+async function Be() {
+	return Le(), Promise.all(Array.from(game.actors).filter(v).map(k));
 }
 //#endregion
 //#region src/module/settings/get-optional-feature-statuses.ts
-function ze() {
-	return Object.entries(m).map(([e, t]) => ({
-		available: h(e),
-		enabled: g(e),
+function Ve() {
+	return Object.entries(p).map(([e, t]) => ({
+		available: m(e),
+		enabled: h(e),
 		id: e,
 		targetModuleId: t.targetModuleIds[0],
 		targetModuleIds: t.targetModuleIds
@@ -349,29 +357,29 @@ function ze() {
 }
 //#endregion
 //#region src/functions/integrations/paper-doll-argon/bridge.ts
-var Be = ["TRINKET", "WRIST_RIGHT"];
-function Ve(e, t) {
+var He = ["TRINKET", "WRIST_RIGHT"];
+function Ue(e, t) {
 	let n = Number(e), r = Number(t);
 	return Number.isInteger(n) && Number.isInteger(r) ? n - r : e.localeCompare(t);
 }
-function He(e) {
+function We(e) {
 	let t = /* @__PURE__ */ new Set();
-	for (let n of Be) {
+	for (let n of He) {
 		let r = e[n] ?? {};
-		for (let e of Object.keys(r).sort(Ve)) {
+		for (let e of Object.keys(r).sort(Ue)) {
 			let n = r[e];
 			n && t.add(n);
 		}
 	}
 	return [...t];
 }
-function Ue(e) {
+function Ge(e) {
 	return {
 		left: e.MAIN_LEFT?.["0"] ?? null,
 		right: e.MAIN_RIGHT?.["0"] ?? null
 	};
 }
-function We({ activeSetId: e, mainHand: t, mainSlots: n, weaponSets: r }) {
+function Ke({ activeSetId: e, mainHand: t, mainSlots: n, weaponSets: r }) {
 	let i = t === "l" ? n.left : n.right, a = t === "l" ? n.right : n.left, o = a === i ? null : a;
 	return {
 		...r,
@@ -382,12 +390,12 @@ function We({ activeSetId: e, mainHand: t, mainSlots: n, weaponSets: r }) {
 		}
 	};
 }
-function Ge(e, t) {
+function qe(e, t) {
 	return JSON.stringify(e) === JSON.stringify(t);
 }
 //#endregion
 //#region src/module/integrations/enhancedcombathud/constants.ts
-var Ke = "enhancedcombathud", qe = f, Je = "enhancedcombathud-wfrp4e", Ye = "modules/wfrp4e-compatibility-box/templates/argon-actor-config.hbs", A = "modules/enhancedcombathud/icons", Xe = [
+var A = "enhancedcombathud", Je = d, Ye = "enhancedcombathud-wfrp4e", Xe = "modules/wfrp4e-compatibility-box/templates/argon-actor-config.hbs", j = "modules/enhancedcombathud/icons", Ze = [
 	"ws",
 	"bs",
 	"s",
@@ -398,13 +406,13 @@ var Ke = "enhancedcombathud", qe = f, Je = "enhancedcombathud-wfrp4e", Ye = "mod
 	"int",
 	"wp",
 	"fel"
-], Ze = [{
+], Qe = [{
 	key: "ws",
-	icon: `${A}/crossed-swords.webp`
+	icon: `${j}/crossed-swords.webp`
 }, {
 	key: "bs",
-	icon: `${A}/bolt-spell-cast.webp`
-}], Qe = [
+	icon: `${j}/bolt-spell-cast.webp`
+}], $e = [
 	{
 		fallback: "Dodge",
 		nameKey: "Dodge"
@@ -436,7 +444,7 @@ var Ke = "enhancedcombathud", qe = f, Je = "enhancedcombathud-wfrp4e", Ye = "mod
 ];
 //#endregion
 //#region src/module/integrations/enhancedcombathud/refresh.ts
-async function $e() {
+async function et() {
 	let e = ui?.ARGON;
 	if (e) {
 		if (typeof e.refresh != "function") throw Error("Argon's mounted HUD does not expose its required refresh API.");
@@ -445,15 +453,15 @@ async function $e() {
 }
 //#endregion
 //#region src/functions/patches/paper-doll/find-slot-changes.ts
-function et(e, t, n) {
+function tt(e, t, n) {
 	return e[t]?.[n] ?? null;
 }
-function tt(e, t) {
+function nt(e, t) {
 	let n = new Set([...Object.keys(e), ...Object.keys(t)]), r = [];
 	for (let i of n) {
 		let n = new Set([...Object.keys(e[i] ?? {}), ...Object.keys(t[i] ?? {})]);
 		for (let a of n) {
-			let n = et(e, i, a), o = et(t, i, a);
+			let n = tt(e, i, a), o = tt(t, i, a);
 			n !== o && r.push({
 				from: n,
 				slotId: i,
@@ -466,179 +474,179 @@ function tt(e, t) {
 }
 //#endregion
 //#region src/module/patches/paper-doll/enforce-paper-doll-equipped-state.ts
-var nt = Symbol.for("paper-doll-wfrp4e.equipped-state");
-function rt() {
+var rt = Symbol.for("paper-doll-wfrp4e.equipped-state");
+function it() {
 	return globalThis.ui?.paperDoll?.prototype ?? null;
 }
-function it(e, t, n) {
+function at(e, t, n) {
 	if (!e || typeof t != "function" || typeof n != "function") throw Error("Paper Doll's required equip integration API is unavailable.");
 }
-function at(e) {
-	if (!_(e) || typeof e.slotId != "string") return null;
+function ot(e) {
+	if (!g(e) || typeof e.slotId != "string") return null;
 	let t = Number(e.slotIndex);
 	return Number.isInteger(t) ? {
 		slotId: e.slotId,
 		slotIndex: t
 	} : null;
 }
-function ot() {
+function st() {
 	return Promise.resolve();
 }
-function st() {
-	let e = rt(), t = e?.equip, n = globalThis.fromUuid;
-	if (it(e, t, n), e[nt] === !0) return;
+function ct() {
+	let e = it(), t = e?.equip, n = globalThis.fromUuid;
+	if (at(e, t, n), e[rt] === !0) return;
 	let r = t;
 	e.equip = async function(e, t, i) {
 		let a = await n(e);
-		if (!y(a)) return r.call(this, e, t, i);
-		let o = at(i);
-		if (!t) return ot();
+		if (!y(a) || _(this.actor) && !v(this.actor)) return r.call(this, e, t, i);
+		let o = ot(i);
+		if (!t) return st();
 		if (!v(this.actor)) throw Error(`Paper Doll did not provide a WFRP actor while equipping ${a.uuid}.`);
 		if (!o) throw Error(`Paper Doll did not provide a valid slot while equipping ${a.uuid}.`);
-		if (!we(a, o.slotId)) throw Error(`Paper Doll attempted to equip ${a.uuid} in incompatible ${o.slotId} slot.`);
+		if (!Ee(a, o.slotId)) throw Error(`Paper Doll attempted to equip ${a.uuid} in incompatible ${o.slotId} slot.`);
 		try {
-			await Te(this.actor, a, o);
+			await De(this.actor, a, o);
 		} catch (e) {
-			C(`could not equip ${a.name} from Paper Doll`, e);
+			w(`could not equip ${a.name} from Paper Doll`, e);
 			try {
 				await k(this.actor);
 			} catch (e) {
-				C(`could not restore ${a.name}'s Paper Doll slot`, e);
+				w(`could not restore ${a.name}'s Paper Doll slot`, e);
 			}
 			throw e;
 		}
-	}, e[nt] = !0;
+	}, e[rt] = !0;
 }
 //#endregion
 //#region src/module/patches/paper-doll/enforce-paper-doll-slot-types.ts
-var ct = Symbol.for("paper-doll-wfrp4e.slot-type-filter");
-function lt() {
+var lt = Symbol.for("paper-doll-wfrp4e.slot-type-filter");
+function ut() {
 	return globalThis.ui?.paperDoll?.prototype ?? null;
 }
-function ut(e, t) {
+function dt(e, t) {
 	if (!e || typeof t != "function") throw Error("Paper Doll's required filterItems integration API is unavailable.");
 }
-function dt() {
-	let e = lt(), t = e?.filterItems;
-	if (ut(e, t), e[ct] === !0) return;
+function ft() {
+	let e = ut(), t = e?.filterItems;
+	if (dt(e, t), e[lt] === !0) return;
 	let n = t;
 	e.filterItems = function(e, t, r) {
-		return n.call(this, e, t, r).filter((e) => y(e) && we(e, t));
-	}, e[ct] = !0;
+		return n.call(this, e, t, r).filter((e) => y(e) && Ee(e, t));
+	}, e[lt] = !0;
 }
 //#endregion
 //#region src/module/patches/paper-doll/register-slot-tooltips.ts
-var ft = ".paper-doll .paper-doll-slot", j = `data-${f}-drag-tooltip`, M = `data-${f}-tooltip`, N = `data-${f}-original-tooltip`, pt = {
+var pt = ".paper-doll .paper-doll-slot", M = `data-${d}-drag-tooltip`, N = `data-${d}-tooltip`, mt = `data-${d}-original-tooltip`, ht = {
 	HEAD: {
-		key: `${f}.SlotTooltip.Head`,
+		key: `${d}.SlotTooltip.Head`,
 		fallback: "Head armour"
 	},
 	CAPE: {
-		key: `${f}.SlotTooltip.Cape`,
+		key: `${d}.SlotTooltip.Cape`,
 		fallback: "Aesthetic Item"
 	},
 	BODY: {
-		key: `${f}.SlotTooltip.Body`,
+		key: `${d}.SlotTooltip.Body`,
 		fallback: "Body armour"
 	},
 	GLOVES: {
-		key: `${f}.SlotTooltip.Gloves`,
+		key: `${d}.SlotTooltip.Gloves`,
 		fallback: "Arm armour"
 	},
 	BOOTS: {
-		key: `${f}.SlotTooltip.Boots`,
+		key: `${d}.SlotTooltip.Boots`,
 		fallback: "Leg armour"
 	},
 	TRINKET: {
-		key: `${f}.SlotTooltip.Trinket`,
+		key: `${d}.SlotTooltip.Trinket`,
 		fallback: "Ready Item"
 	},
 	PENDANT: {
-		key: `${f}.SlotTooltip.Pendant`,
+		key: `${d}.SlotTooltip.Pendant`,
 		fallback: "Amulet"
 	},
 	RING: {
-		key: `${f}.SlotTooltip.Ring`,
+		key: `${d}.SlotTooltip.Ring`,
 		fallback: "Worn Item"
 	},
 	WRIST_LEFT: {
-		key: `${f}.SlotTooltip.WristLeft`,
+		key: `${d}.SlotTooltip.WristLeft`,
 		fallback: "Light Source"
 	},
 	WRIST_RIGHT: {
-		key: `${f}.SlotTooltip.WristRight`,
+		key: `${d}.SlotTooltip.WristRight`,
 		fallback: "Quick Use Item"
 	},
 	MAIN_LEFT: {
-		key: `${f}.SlotTooltip.MainLeft`,
+		key: `${d}.SlotTooltip.MainLeft`,
 		fallback: "Main hand"
 	},
 	MAIN_RIGHT: {
-		key: `${f}.SlotTooltip.MainRight`,
+		key: `${d}.SlotTooltip.MainRight`,
 		fallback: "Off hand"
 	}
-}, mt = !1;
-function ht(e) {
+}, gt = !1;
+function _t(e) {
 	if (!(e instanceof Element)) return null;
-	let t = e.closest(ft);
+	let t = e.closest(pt);
 	return t?.closest(".paper-doll") ? t : null;
 }
-function gt() {
-	document.querySelectorAll(`[${M}]`).forEach((e) => {
-		let t = e.getAttribute(N);
-		t ? e.dataset.tooltip = t : e.removeAttribute("data-tooltip"), e.removeAttribute(M), e.removeAttribute(N);
-	});
-}
-function _t() {
-	document.querySelectorAll(ft).forEach((e) => {
-		let t = e.getAttribute("data-tooltip");
-		t && (e.setAttribute(j, t), e.removeAttribute("data-tooltip"));
-	});
-}
 function vt() {
-	document.querySelectorAll(`[${j}]`).forEach((e) => {
-		let t = e.getAttribute(j);
-		t && (e.dataset.tooltip = t), e.removeAttribute(j);
+	document.querySelectorAll(`[${N}]`).forEach((e) => {
+		let t = e.getAttribute(mt);
+		t ? e.dataset.tooltip = t : e.removeAttribute("data-tooltip"), e.removeAttribute(N), e.removeAttribute(mt);
 	});
 }
-function yt(e) {
-	if (mt || e.hasAttribute(M)) return;
-	let t = pt[e.dataset.id ?? ""];
+function yt() {
+	document.querySelectorAll(pt).forEach((e) => {
+		let t = e.getAttribute("data-tooltip");
+		t && (e.setAttribute(M, t), e.removeAttribute("data-tooltip"));
+	});
+}
+function bt() {
+	document.querySelectorAll(`[${M}]`).forEach((e) => {
+		let t = e.getAttribute(M);
+		t && (e.dataset.tooltip = t), e.removeAttribute(M);
+	});
+}
+function xt(e) {
+	if (gt || e.hasAttribute(N)) return;
+	let t = ht[e.dataset.id ?? ""];
 	if (!t || !game) return;
 	let n = game.i18n.localize(t.key), r = n === t.key ? t.fallback : n, i = e.dataset.tooltip;
-	i && e.setAttribute(N, i), e.dataset.tooltip = i ? `${r}: ${i}` : r, e.setAttribute(M, "");
+	i && e.setAttribute(mt, i), e.dataset.tooltip = i ? `${r}: ${i}` : r, e.setAttribute(N, "");
 }
-function bt(e) {
-	let t = ht(e.target);
-	t && yt(t);
-}
-function xt() {
-	mt = !0, gt(), _t();
-}
-function St() {
-	mt = !1, vt();
+function St(e) {
+	let t = _t(e.target);
+	t && xt(t);
 }
 function Ct() {
-	document.addEventListener("pointerover", bt, !0), document.addEventListener("dragstart", xt, !0), document.addEventListener("dragend", St, !0);
+	gt = !0, vt(), yt();
+}
+function wt() {
+	gt = !1, bt();
+}
+function Tt() {
+	document.addEventListener("pointerover", St, !0), document.addEventListener("dragstart", Ct, !0), document.addEventListener("dragend", wt, !0);
 }
 //#endregion
 //#region src/module/patches/paper-doll/register-paper-doll-hooks.ts
 var P = /* @__PURE__ */ new Map();
 function F() {
-	return game?.system.id === "wfrp4e" && game.modules.get("fvtt-paper-doll-ui")?.active === !0 && g("paperDoll");
+	return game?.system.id === "wfrp4e" && game.modules.get("fvtt-paper-doll-ui")?.active === !0 && h("paperDoll");
 }
-function wt(e) {
-	if (!_(e) || !("flags" in e)) return { kind: "absent" };
+function Et(e) {
+	if (!g(e) || !("flags" in e)) return { kind: "absent" };
 	let t = e.flags;
-	if (!_(t)) return {
+	if (!g(t)) return {
 		kind: "malformed",
 		reason: "the flags update is not an object"
 	};
 	if (!("fvtt-paper-doll-ui" in t)) return { kind: "absent" };
-	let n = t[T];
-	return _(n) ? "slots" in n ? d(n.slots) ? {
+	let n = t[E];
+	return g(n) ? "slots" in n ? u(n.slots) ? {
 		kind: "valid",
-		state: n[E]
+		state: n[D]
 	} : {
 		kind: "malformed",
 		reason: "the Paper Doll slots update has an invalid shape"
@@ -647,156 +655,156 @@ function wt(e) {
 		reason: "the Paper Doll flag update is not an object"
 	};
 }
-function Tt(e) {
-	let t = wt(e);
+function Dt(e) {
+	let t = Et(e);
 	if (t.kind === "malformed") throw Error(`Paper Doll slot update cannot be synchronized: ${t.reason}.`);
 	return t.kind === "valid" ? t.state : null;
 }
-function Et(e, t) {
+function Ot(e, t) {
 	return Array.from(e.items).find((e) => e.uuid === t) ?? null;
 }
-function Dt(e, t) {
+function kt(e, t) {
 	let n = P.get(e.uuid) ?? /* @__PURE__ */ new Set();
 	n.add(t), P.set(e.uuid, n);
 }
-function Ot(e) {
-	if (!_(e) || typeof e.slotId != "string") return null;
+function At(e) {
+	if (!g(e) || typeof e.slotId != "string") return null;
 	let t = Number(e.slotIndex);
 	return Number.isInteger(t) ? {
 		slotId: e.slotId,
 		slotIndex: t
 	} : null;
 }
-async function kt(e, t, n) {
+async function jt(e, t, n) {
 	let r = (await Promise.allSettled(t)).flatMap((e) => e.status === "rejected" ? [e.reason] : []);
-	r.length && (C(n, AggregateError(r, n)), await k(e));
+	r.length && (w(n, AggregateError(r, n)), await k(e));
 }
-function At(e, t, n) {
+function Mt(e, t, n) {
 	if (!F() || !v(e)) return;
 	let r = [];
 	for (let i of [t, n]) {
-		if (!_(i) || typeof i.item != "string") continue;
-		let t = Ot(i);
+		if (!g(i) || typeof i.item != "string") continue;
+		let t = At(i);
 		if (!t) throw Error(`Paper Doll swap for ${i.item} has an invalid slot address.`);
-		let n = Et(e, i.item);
+		let n = Ot(e, i.item);
 		if (!n) throw Error(`Paper Doll swap references item ${i.item} outside the actor.`);
-		if (!we(n, t.slotId)) throw Error(`Paper Doll swap placed ${n.uuid} in incompatible ${t.slotId} slot.`);
-		r.push(Te(e, n, t));
+		if (!Ee(n, t.slotId)) throw Error(`Paper Doll swap placed ${n.uuid} in incompatible ${t.slotId} slot.`);
+		r.push(De(e, n, t));
 	}
-	r.length && w(kt(e, r, "one or more Paper Doll slot-swap equipment updates failed"), `could not restore Paper Doll slots after a failed slot swap for ${e.uuid}`);
+	r.length && T(jt(e, r, "one or more Paper Doll slot-swap equipment updates failed"), `could not restore Paper Doll slots after a failed slot swap for ${e.uuid}`);
 }
-function jt(e, t) {
-	if (!F() || !v(e) || Ne(e)) return;
-	let n = Tt(t);
+function Nt(e, t) {
+	if (!F() || !v(e) || Fe(e)) return;
+	let n = Dt(t);
 	if (!n) return;
-	let r = e.getFlag(T, E);
+	let r = e.getFlag(E, D);
 	if (r !== void 0) {
-		if (!d(r)) throw Error("Paper Doll's existing slot flag has an invalid shape.");
-		for (let t of tt(r, n)) {
+		if (!u(r)) throw Error("Paper Doll's existing slot flag has an invalid shape.");
+		for (let t of nt(r, n)) {
 			if (!t.from) continue;
-			let n = Et(e, t.from);
+			let n = Ot(e, t.from);
 			if (!n) throw Error(`Paper Doll removed slot item ${t.from}, but the actor does not own it.`);
-			(!t.to || n.type !== "armour") && Dt(e, n.uuid);
+			(!t.to || n.type !== "armour") && kt(e, n.uuid);
 		}
 	}
 }
-function Mt(e, t) {
-	if (!F() || !v(e) || !Tt(t)) return;
+function Pt(e, t) {
+	if (!F() || !v(e) || !Dt(t)) return;
 	let n = P.get(e.uuid);
-	P.delete(e.uuid), n?.size && w(kt(e, Array.from(n, (t) => {
-		let n = Et(e, t);
+	P.delete(e.uuid), n?.size && T(jt(e, Array.from(n, (t) => {
+		let n = Ot(e, t);
 		if (!n) throw Error(`Queued Paper Doll unequip item ${t} is no longer owned by the actor.`);
 		return n;
-	}).map(Ee), `one or more Paper Doll unequip updates failed for ${e.uuid}`), `could not restore Paper Doll slots after a failed unequip for ${e.uuid}`);
+	}).map(Oe), `one or more Paper Doll unequip updates failed for ${e.uuid}`), `could not restore Paper Doll slots after a failed unequip for ${e.uuid}`);
 }
-function Nt(e) {
-	!F() || !y(e) || e.type !== "armour" && e.type !== "weapon" && !xe(e) || v(e.parent) && Le(e.parent);
+function Ft(e) {
+	!F() || !y(e) || e.type !== "armour" && e.type !== "weapon" && !Ce(e) || v(e.parent) && ze(e.parent);
 }
-function Pt() {
-	Ct(), Hooks.on("paper-doll-swap", At), Hooks.on("preUpdateActor", jt), Hooks.on("updateActor", Mt), Hooks.on("updateItem", Nt), Hooks.once("ready", () => {
+function It() {
+	Tt(), Hooks.on("paper-doll-swap", Mt), Hooks.on("preUpdateActor", Nt), Hooks.on("updateActor", Pt), Hooks.on("updateItem", Ft), Hooks.once("ready", () => {
 		if (F()) {
 			try {
-				dt(), st();
+				ft(), ct();
 			} catch (e) {
-				throw C("could not initialize the required Paper Doll integration", e), e;
+				throw w("could not initialize the required Paper Doll integration", e), e;
 			}
-			w(Re(), "could not synchronize all equipped items at startup");
+			T(Be(), "could not synchronize all equipped items at startup");
 		}
 	});
 }
 //#endregion
 //#region src/module/integrations/fvtt-paper-doll-ui/register-integration.ts
-var Ft = "fvtt-paper-doll-ui";
-function It() {
-	p("fvtt-paper-doll-ui") && g("paperDoll") && Pt();
+var Lt = "fvtt-paper-doll-ui";
+function Rt() {
+	f("fvtt-paper-doll-ui") && h("paperDoll") && It();
 }
 //#endregion
 //#region src/module/integrations/paper-doll-argon/bridge-runtime.ts
-var Lt = "activeWeaponSet", I = "slots", Rt = "weaponSets";
-function zt(e) {
-	let t = e.getFlag(Ft, I);
+var zt = "activeWeaponSet", I = "slots", Bt = "weaponSets";
+function Vt(e) {
+	let t = e.getFlag(Lt, I);
 	if (t === void 0) return {};
-	if (!d(t)) throw Error(`Paper Doll slots for ${e.uuid} have an invalid shape.`);
+	if (!u(t)) throw Error(`Paper Doll slots for ${e.uuid} have an invalid shape.`);
 	return t;
 }
-function Bt(e) {
-	let t = e.getFlag(Ke, Lt);
+function Ht(e) {
+	let t = e.getFlag(A, zt);
 	if (t === void 0) return "1";
 	if (typeof t != "string" || !t.trim()) throw Error(`Argon's active weapon set for ${e.uuid} is invalid.`);
 	return t;
 }
-function Vt(e, t) {
+function Ut(e, t) {
 	if (e == null || typeof e == "string" && e.length > 0) return e;
 	throw Error(`${t} must contain an item UUID, null, or be absent.`);
 }
-function Ht(e) {
-	let t = e.getFlag(Ke, Rt);
+function Wt(e) {
+	let t = e.getFlag(A, Bt);
 	if (t === void 0) return {};
-	if (!_(t)) throw Error(`Argon weapon sets for ${e.uuid} have an invalid shape.`);
+	if (!g(t)) throw Error(`Argon weapon sets for ${e.uuid} have an invalid shape.`);
 	return Object.fromEntries(Object.entries(t).map(([e, t]) => {
-		if (!e || !_(t)) throw Error(`Argon weapon set ${e || "<empty>"} has an invalid shape.`);
+		if (!e || !g(t)) throw Error(`Argon weapon set ${e || "<empty>"} has an invalid shape.`);
 		return [e, {
-			primary: Vt(t.primary, `Argon weapon set ${e} primary slot`),
-			secondary: Vt(t.secondary, `Argon weapon set ${e} secondary slot`)
+			primary: Ut(t.primary, `Argon weapon set ${e} primary slot`),
+			secondary: Ut(t.secondary, `Argon weapon set ${e} secondary slot`)
 		}];
 	}));
 }
-async function Ut(e, t) {
-	let n = Ht(e), r = We({
-		activeSetId: Bt(e),
-		mainHand: Ce(e),
-		mainSlots: Ue(t),
+async function Gt(e, t) {
+	let n = Wt(e), r = Ke({
+		activeSetId: Ht(e),
+		mainHand: Te(e),
+		mainSlots: Ge(t),
 		weaponSets: n
-	}), i = !Ge(n, r);
-	return i && await e.setFlag(Ke, Rt, r), await $e(), i ? "synchronized" : "unchanged";
+	}), i = !qe(n, r);
+	return i && await e.setFlag(A, Bt, r), await et(), i ? "synchronized" : "unchanged";
 }
-function Wt(e) {
-	if (!v(e)) throw Error("Paper Doll quick items require a WFRP actor document.");
+function Kt(e) {
+	if (!_(e)) throw Error("Paper Doll quick items require a WFRP actor document.");
 	let t = new Map(Array.from(e.items, (e) => [e.uuid, e]));
-	return He(zt(e)).map((n) => {
+	return We(Vt(e)).map((n) => {
 		let r = t.get(n);
 		if (!r) throw Error(`Paper Doll quick slot item ${n} is not owned by ${e.uuid}.`);
 		if (r.type === "weapon" || r.type === "armour") throw Error(`Paper Doll quick slot ${n} contains ${r.type} equipment.`);
 		return r;
 	});
 }
-function Gt(e) {
-	if (!_(e) || !("flags" in e)) return null;
+function qt(e) {
+	if (!g(e) || !("flags" in e)) return null;
 	let t = e.flags;
-	if (!_(t) || !("fvtt-paper-doll-ui" in t)) return null;
-	let n = t[Ft];
-	if (!_(n) || !(I in n)) return null;
+	if (!g(t) || !("fvtt-paper-doll-ui" in t)) return null;
+	let n = t[Lt];
+	if (!g(n) || !(I in n)) return null;
 	let r = n[I];
-	if (!d(r)) throw Error("The updated Paper Doll slots have an invalid shape.");
+	if (!u(r)) throw Error("The updated Paper Doll slots have an invalid shape.");
 	return r;
 }
-async function Kt(e) {
-	if (!v(e)) throw Error("Paper Doll–Argon synchronization requires a WFRP actor document.");
-	return !g("paperDoll") || !g("argonCombatHud") || !g("paperDollArgonBridge") ? "unavailable" : e.getFlag("fvtt-paper-doll-ui", I) === void 0 ? (await $e(), "unchanged") : Ut(e, zt(e));
+async function Jt(e) {
+	if (!_(e)) throw Error("Paper Doll–Argon synchronization requires a WFRP actor document.");
+	return !v(e) || !h("paperDoll") || !h("argonCombatHud") || !h("paperDollArgonBridge") ? "unavailable" : e.getFlag("fvtt-paper-doll-ui", I) === void 0 ? (await et(), "unchanged") : Gt(e, Vt(e));
 }
 //#endregion
 //#region src/functions/integrations/splatter/configuration.ts
-var qt = "details.species.value", L = "#a51414d8", Jt = "#7e1717dc", Yt = "#b31f18d8", Xt = "#b01832d8", Zt = "#861a24d8", R = "#541e1ed8", z = "#6a0e0ed8", B = "#6f3518e0", V = "#621010e0", H = "#771616dc", U = "#440707d8", W = "#14101490", G = "#0b080de8", Qt = [
+var Yt = "details.species.value", L = "#a51414d8", Xt = "#7e1717dc", Zt = "#b31f18d8", Qt = "#b01832d8", $t = "#861a24d8", R = "#541e1ed8", z = "#6a0e0ed8", B = "#6f3518e0", V = "#621010e0", H = "#771616dc", U = "#440707d8", W = "#14101490", G = "#0b080de8", en = [
 	["Jabberslythe", "#78d61be8"],
 	["Chameleon Skink", z],
 	["Kroxigor", z],
@@ -851,87 +859,87 @@ var qt = "details.species.value", L = "#a51414d8", Jt = "#7e1717dc", Yt = "#b31f
 	["Maurngul", U],
 	["Mourngul", U],
 	["Human", L],
-	["Dwarf", Jt],
-	["Halfling", Yt],
-	["High Elf", Xt],
-	["helf", Xt],
-	["Wood Elf", Zt],
-	["welf", Zt],
+	["Dwarf", Xt],
+	["Halfling", Zt],
+	["High Elf", Qt],
+	["helf", Qt],
+	["Wood Elf", $t],
+	["welf", $t],
 	["Ogre", R]
 ];
-function $t() {
+function tn() {
 	let e = {};
-	for (let [t, n] of Qt) e[t] = n, e[t.toLowerCase()] ??= n;
+	for (let [t, n] of en) e[t] = n, e[t.toLowerCase()] ??= n;
 	return e;
 }
-function en(e) {
+function nn(e) {
 	return !e || typeof e != "object" || Array.isArray(e) ? {} : Object.fromEntries(Object.entries(e).filter((e) => e[0].length > 0 && typeof e[1] == "string"));
 }
-function tn(e = {}) {
-	let t = $t();
+function rn(e = {}) {
+	let t = tn();
 	for (let [n, r] of Object.entries(e)) {
 		let e = t[n] ?? (r ? t[r] : void 0) ?? L;
 		t[n] ??= e, r && (t[r] ??= e);
 	}
 	return t;
 }
-function nn(e, t = {}) {
-	let n = en(e);
-	for (let [e, r] of Object.entries(tn(t))) n[e] ??= r;
+function an(e, t = {}) {
+	let n = nn(e);
+	for (let [e, r] of Object.entries(rn(t))) n[e] ??= r;
 	return n;
 }
 //#endregion
 //#region src/module/integrations/splatter/constants.ts
-var K = "splatter", rn = "useBloodsheet", an = "BloodSheetData", on = "creatureType", sn = [
-	an,
-	on,
-	rn
+var K = "splatter", on = "useBloodsheet", sn = "BloodSheetData", cn = "creatureType", ln = [
+	sn,
+	cn,
+	on
 ];
-function cn() {
+function un() {
 	return game?.wfrp4e?.config.species ?? {};
 }
-function ln() {
+function dn() {
 	let e = game?.settings.settings;
 	if (e) {
-		for (let t of sn) if (!e.has(`splatter.${t}`)) throw Error(`Splatter setting ${t} is unavailable.`);
+		for (let t of ln) if (!e.has(`splatter.${t}`)) throw Error(`Splatter setting ${t} is unavailable.`);
 	}
 }
-async function un() {
+async function fn() {
 	if (!game) throw Error("Foundry game is unavailable while configuring Splatter.");
 	if (!game.ready) throw Error("Foundry must finish loading before Splatter can be configured.");
-	if (!p("splatter")) throw Error("Splatter must be active before it can be configured.");
+	if (!f("splatter")) throw Error("Splatter must be active before it can be configured.");
 	if (!game.user?.isGM) throw Error("Only a gamemaster can change Splatter's world settings.");
-	ln();
-	let e = nn(game.settings.get(K, an), cn());
-	return await game.settings.set(K, an, e), await game.settings.set(K, on, qt), await game.settings.set(K, rn, !0), {
+	dn();
+	let e = an(game.settings.get(K, sn), un());
+	return await game.settings.set(K, sn, e), await game.settings.set(K, cn, Yt), await game.settings.set(K, on, !0), {
 		automaticBloodColors: !0,
 		bloodColorCount: Object.keys(e).length,
-		speciesPath: qt
+		speciesPath: Yt
 	};
 }
 //#endregion
 //#region src/module/api/create-module-api.ts
-function dn() {
+function pn() {
 	return {
-		configureSplatter: un,
-		getOptionalFeatures: ze,
-		syncAllPaperDollActors: Re,
-		syncPaperDollArgonActor: Kt,
+		configureSplatter: fn,
+		getOptionalFeatures: Ve,
+		syncAllPaperDollActors: Be,
+		syncPaperDollArgonActor: Jt,
 		syncPaperDollActor: k
 	};
 }
 //#endregion
 //#region src/module/api/register-module-api.ts
-function fn() {
+function mn() {
 	if (!game) throw Error("Foundry game global is unavailable during module API registration.");
-	let e = game.modules.get(f);
-	if (!e) throw Error(`Foundry module registry entry was not found for ${f}.`);
+	let e = game.modules.get(d);
+	if (!e) throw Error(`Foundry module registry entry was not found for ${d}.`);
 	let t = e;
-	t.api = dn();
+	t.api = pn();
 }
 //#endregion
 //#region src/functions/integrations/enhancedcombathud/argon-logic.ts
-var pn = new Set([
+var hn = new Set([
 	"weapon",
 	"bite",
 	"horn",
@@ -940,70 +948,70 @@ var pn = new Set([
 function q(e) {
 	if (e.type !== "skill" || typeof e.advances != "number" || typeof e.advanced != "string" || typeof e.grouped != "string") throw Error(`Argon skill snapshot ${e.id} is missing its classification fields.`);
 }
-function mn(e) {
+function gn(e) {
 	if (e.type !== "spell" || typeof e.lore != "string" || typeof e.memorized != "boolean") throw Error(`Argon spell snapshot ${e.id} is missing its visibility fields.`);
 }
-function hn(e) {
+function _n(e) {
 	if (e.type !== "trait" || typeof e.disabled != "boolean" || typeof e.rollable != "boolean" || typeof e.traitBaseName != "string") throw Error(`Argon trait snapshot ${e.id} is missing its action fields.`);
 }
-function gn(e) {
+function vn(e) {
 	return e.trim().toLowerCase();
 }
-function _n(e) {
+function yn(e) {
 	return e.replace(/\s*\([^)]*\)\s*$/, "").trim();
 }
-function vn(e) {
-	return e.type === "trait" ? (hn(e), e.rollable && !e.disabled && pn.has(e.traitBaseName.toLowerCase())) : !1;
-}
-function yn(e) {
-	return e.type === "weapon" || vn(e);
-}
 function bn(e) {
-	return e.type === "weapon";
+	return e.type === "trait" ? (_n(e), e.rollable && !e.disabled && hn.has(e.traitBaseName.toLowerCase())) : !1;
 }
 function xn(e) {
-	return q(e), e.advanced === "adv" || e.grouped === "isSpec";
+	return e.type === "weapon" || bn(e);
 }
 function Sn(e) {
+	return e.type === "weapon";
+}
+function Cn(e) {
+	return q(e), e.advanced === "adv" || e.grouped === "isSpec";
+}
+function wn(e) {
 	return q(e), e.advances > 0;
 }
-function Cn(e, t) {
-	return e.forEach(q), t === "basic" ? e.filter((e) => !xn(e)).map((e) => e.id) : t === "advanced" ? e.filter(xn).map((e) => e.id) : t === "trained" ? e.filter(Sn).map((e) => e.id) : e.map((e) => e.id);
+function Tn(e, t) {
+	return e.forEach(q), t === "basic" ? e.filter((e) => !Cn(e)).map((e) => e.id) : t === "advanced" ? e.filter(Cn).map((e) => e.id) : t === "trained" ? e.filter(wn).map((e) => e.id) : e.map((e) => e.id);
 }
-function wn(e, t) {
-	return e.forEach(mn), (t === "memorized" ? e.filter((e) => e.lore === "petty" || e.memorized) : e).map((e) => e.id);
+function En(e, t) {
+	return e.forEach(gn), (t === "memorized" ? e.filter((e) => e.lore === "petty" || e.memorized) : e).map((e) => e.id);
 }
-function Tn(e) {
-	return e.filter((e) => e.type === "weapon" || vn(e)).map((e) => e.id);
-}
-function En(e) {
-	return e.filter((e) => e.type === "trait" ? (hn(e), e.rollable && !e.disabled) : !1).map((e) => e.id);
-}
-function Dn(e, t) {
-	return e.forEach(q), t.flatMap((t) => {
-		let n = gn(t.name), r = e.find((e) => gn(e.name) === n);
-		return !r || t.trained && !Sn(r) ? [] : [r.id];
-	});
+function Dn(e) {
+	return e.filter((e) => e.type === "weapon" || bn(e)).map((e) => e.id);
 }
 function On(e) {
-	return e.split(/[\n,;]+/).map((e) => e.trim()).filter(Boolean);
+	return e.filter((e) => e.type === "trait" ? (_n(e), e.rollable && !e.disabled) : !1).map((e) => e.id);
 }
 function kn(e, t) {
+	return e.forEach(q), t.flatMap((t) => {
+		let n = vn(t.name), r = e.find((e) => vn(e.name) === n);
+		return !r || t.trained && !wn(r) ? [] : [r.id];
+	});
+}
+function An(e) {
+	return e.split(/[\n,;]+/).map((e) => e.trim()).filter(Boolean);
+}
+function jn(e, t) {
 	let n = t.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*");
 	return RegExp(`^${n}$`, "i").test(e);
 }
-function An(e, t) {
+function Mn(e, t) {
 	return t.length ? e.filter((e) => ![
 		"skill",
 		"weapon",
 		"trait",
 		"spell",
 		"prayer"
-	].includes(e.type) && (e.quantity === null || e.quantity > 0) && t.some((t) => kn(e.name, t))).map((e) => e.id) : [];
+	].includes(e.type) && (e.quantity === null || e.quantity > 0) && t.some((t) => jn(e.name, t))).map((e) => e.id) : [];
 }
-function jn(e) {
+function Nn(e) {
 	let t = [];
-	return (e.type === "weapon" || vn(e)) && t.push({
+	return (e.type === "weapon" || bn(e)) && t.push({
 		label: "wfrp4e-compatibility-box.Argon.Tooltip.Damage",
 		value: e.damage
 	}, {
@@ -1035,7 +1043,7 @@ function jn(e) {
 		value: e.duration
 	}), t.filter((e) => e.value !== void 0 && e.value !== "");
 }
-function Mn(e, t) {
+function Pn(e, t) {
 	let n = e.find((e) => e.id === t);
 	if (!n) throw Error(`Argon weapon set ${t} does not exist.`);
 	let r = new Map(n.items.map((e) => [e.id, e])), i = new Map(e.filter((e) => e.id !== t).flatMap((e) => e.items).filter((e) => !r.has(e.id)).map((e) => [e.id, e]));
@@ -1049,94 +1057,94 @@ function Mn(e, t) {
 }
 //#endregion
 //#region src/module/settings/register-module-settings.ts
-var Nn = "argonCombatItemPatterns", Pn = "*Draught*, *Potion*";
-function Fn(e, t) {
-	let n = m[t];
-	h(t) && e.register(f, n.settingKey, {
+var Fn = "argonCombatItemPatterns", In = "*Draught*, *Potion*";
+function Ln(e, t) {
+	let n = p[t];
+	m(t) && e.register(d, n.settingKey, {
 		config: !0,
 		default: !0,
-		hint: `${f}.Settings.Features.${t}.Hint`,
-		name: `${f}.Settings.Features.${t}.Name`,
+		hint: `${d}.Settings.Features.${t}.Hint`,
+		name: `${d}.Settings.Features.${t}.Name`,
 		requiresReload: !0,
 		scope: "world",
 		type: Boolean
 	});
 }
-function In(e) {
-	h("argonCombatHud") && e.register(f, Nn, {
+function Rn(e) {
+	m("argonCombatHud") && e.register(d, Fn, {
 		config: !0,
-		default: Pn,
-		hint: `${f}.Settings.ArgonCombatItemPatterns.Hint`,
-		name: `${f}.Settings.ArgonCombatItemPatterns.Name`,
-		onChange: $e,
+		default: In,
+		hint: `${d}.Settings.ArgonCombatItemPatterns.Hint`,
+		name: `${d}.Settings.ArgonCombatItemPatterns.Name`,
+		onChange: et,
 		scope: "world",
 		type: String
 	});
 }
-function Ln() {
-	if (!game) throw Error(`${f} | Foundry game is unavailable during settings registration.`);
-	Fn(game.settings, "argonCombatHud"), Fn(game.settings, "paperDoll"), Fn(game.settings, "paperDollArgonBridge"), In(game.settings);
+function zn() {
+	if (!game) throw Error(`${d} | Foundry game is unavailable during settings registration.`);
+	Ln(game.settings, "argonCombatHud"), Ln(game.settings, "paperDoll"), Ln(game.settings, "paperDollArgonBridge"), Rn(game.settings);
 }
 //#endregion
 //#region src/module/integrations/enhancedcombathud/actor-flags.ts
-var Rn = [
+var Bn = [
 	"skillVisibility",
 	"spellVisibility",
 	"switchEquip"
 ];
-function zn(e, t) {
-	return e.flags?.[Je]?.[t];
+function Vn(e, t) {
+	return e.flags?.[Ye]?.[t];
 }
-function Bn(e, t) {
-	return e.getFlag("wfrp4e-compatibility-box", t) ?? zn(e, t);
+function Hn(e, t) {
+	return e.getFlag("wfrp4e-compatibility-box", t) ?? Vn(e, t);
 }
-async function Vn(e) {
+async function Un(e) {
 	let t = {};
-	for (let n of Rn) {
+	for (let n of Bn) {
 		if (e.getFlag("wfrp4e-compatibility-box", n) !== void 0) continue;
-		let r = zn(e, n);
-		r !== void 0 && (t[`flags.${f}.${n}`] = r);
+		let r = Vn(e, n);
+		r !== void 0 && (t[`flags.${d}.${n}`] = r);
 	}
 	Object.keys(t).length && await e.update(t);
 }
 //#endregion
 //#region src/module/integrations/enhancedcombathud/argon-helpers.ts
-function Hn(e, t) {
-	if (typeof e != "object" || !e) throw Error(`${f} | ${t} must be an object.`);
+function Wn(e, t) {
+	if (typeof e != "object" || !e) throw Error(`${d} | ${t} must be an object.`);
 	return e;
 }
 function J(e, t) {
-	if (typeof e != "string" || !e.trim()) throw Error(`${f} | ${t} must be a non-empty string.`);
+	if (typeof e != "string" || !e.trim()) throw Error(`${d} | ${t} must be a non-empty string.`);
 	return e;
 }
 function Y(e, t) {
-	if (typeof e != "boolean") throw Error(`${f} | ${t} must be a boolean.`);
+	if (typeof e != "boolean") throw Error(`${d} | ${t} must be a boolean.`);
 	return e;
 }
-function Un(e, t) {
-	if (!Number.isNumeric(e)) throw Error(`${f} | ${t} must be numeric.`);
+function Gn(e, t) {
+	if (!Number.isNumeric(e)) throw Error(`${d} | ${t} must be numeric.`);
 	return Number(e);
 }
-function Wn(e) {
-	return e == null || e === "" ? null : Un(e, "item quantity");
+function Kn(e) {
+	return e == null || e === "" ? null : Gn(e, "item quantity");
 }
-function Gn(e, t, n, r) {
-	let i = Bn(e, t);
+function qn(e, t, n, r) {
+	let i = Hn(e, t);
 	if (i === void 0) return r;
-	if (!n.includes(i)) throw Error(`${f} | Argon actor flag ${qe}.${t} has invalid value ${String(i)}.`);
+	if (!n.includes(i)) throw Error(`${d} | Argon actor flag ${Je}.${t} has invalid value ${String(i)}.`);
 	return i;
 }
-function Kn(e, t, n) {
+function Jn(e, t, n) {
 	(n === "weapon" || n === "trait") && (e.damage = t.DamageString, e.range = Y(t.isRanged, `${n} ${e.name} ranged state`) ? t.Range : void 0, e.reach = t.Reach), n === "skill" && (e.total = t.total?.value), n === "spell" && (e.castingNumber = t.cn?.value), (n === "spell" || n === "prayer") && (e.duration = t.Duration, e.range = t.Range, e.target = t.Target);
 }
 function X(e, t = !1) {
-	let n = Hn(e, "Argon item"), r = J(n.type, "Argon item type"), i = J(n.name, `${r} item name`), a = {
+	let n = Wn(e, "Argon item"), r = J(n.type, "Argon item type"), i = J(n.name, `${r} item name`), a = {
 		id: J(n.id, `${r} ${i} id`),
 		name: i,
-		quantity: Wn(n.quantity?.value ?? n.system?.quantity?.value),
+		quantity: Kn(n.quantity?.value ?? n.system?.quantity?.value),
 		type: r
 	};
-	return r === "skill" && (a.advanced = J(n.advanced?.value, `${i} advanced classification`), a.grouped = J(n.grouped?.value, `${i} grouped classification`), a.advances = Un(n.advances?.value ?? n.system?.advances?.value, `${i} advances`)), r === "spell" && (a.lore = J(n.lore?.value, `${i} lore`), a.memorized = Y(n.memorized?.value, `${i} memorized state`)), r === "trait" && (a.disabled = Y(n.system?.disabled, `${i} disabled state`), a.rollable = Y(n.rollable?.value, `${i} rollable state`), a.traitBaseName = _n(i)), t && Kn(a, n, r), a;
+	return r === "skill" && (a.advanced = J(n.advanced?.value, `${i} advanced classification`), a.grouped = J(n.grouped?.value, `${i} grouped classification`), a.advances = Gn(n.advances?.value ?? n.system?.advances?.value, `${i} advances`)), r === "spell" && (a.lore = J(n.lore?.value, `${i} lore`), a.memorized = Y(n.memorized?.value, `${i} memorized state`)), r === "trait" && (a.disabled = Y(n.system?.disabled, `${i} disabled state`), a.rollable = Y(n.rollable?.value, `${i} rollable state`), a.traitBaseName = yn(i)), t && Jn(a, n, r), a;
 }
 function Z(e) {
 	return [...e].map((e) => X(e));
@@ -1145,71 +1153,71 @@ function Q(e, t) {
 	let n = new Map([...e].map((e) => [e.id, e]));
 	return t.map((e) => {
 		let t = n.get(e);
-		if (!t) throw Error(`${f} | Selected Argon item ${e} is no longer available.`);
+		if (!t) throw Error(`${d} | Selected Argon item ${e} is no longer available.`);
 		return t;
 	});
 }
-function qn(e) {
-	return jn(X(e, !0));
+function Yn(e) {
+	return Nn(X(e, !0));
 }
-function Jn(e) {
-	let t = Gn(e, "skillVisibility", [
+function Xn(e) {
+	let t = qn(e, "skillVisibility", [
 		"all",
 		"basic",
 		"advanced",
 		"trained"
 	], "all"), n = [...e.itemTypes.skill];
-	return Q(n, Cn(Z(n), t));
-}
-function Yn(e) {
-	let t = Gn(e, "spellVisibility", ["all", "memorized"], "all"), n = [...e.itemTypes.spell];
-	return Q(n, wn(Z(n), t));
-}
-function Xn(e) {
-	let t = [...e.itemTypes.weapon, ...e.itemTypes.trait];
-	return Q(t, Tn(Z(t)));
+	return Q(n, Tn(Z(n), t));
 }
 function Zn(e) {
-	let t = [...e.itemTypes.trait];
-	return Q(t, En(Z(t)));
+	let t = qn(e, "spellVisibility", ["all", "memorized"], "all"), n = [...e.itemTypes.spell];
+	return Q(n, En(Z(n), t));
 }
 function Qn(e) {
-	let t = Ze.map((e) => ({
+	let t = [...e.itemTypes.weapon, ...e.itemTypes.trait];
+	return Q(t, Dn(Z(t)));
+}
+function $n(e) {
+	let t = [...e.itemTypes.trait];
+	return Q(t, On(Z(t)));
+}
+function er(e) {
+	let t = Qe.map((e) => ({
 		...e,
 		type: "characteristic"
-	})), n = Qe.map((e) => ({
-		name: $n(e),
+	})), n = $e.map((e) => ({
+		name: tr(e),
 		trained: !!e.trained
-	})), r = [...e.itemTypes.skill], i = Q(r, Dn(Z(r), n));
+	})), r = [...e.itemTypes.skill], i = Q(r, kn(Z(r), n));
 	return [...t, ...i.map((e) => ({
 		item: e,
 		type: "skill"
 	}))];
 }
-function $n({ nameKey: e, fallback: t, specKey: n, specFallback: r }) {
-	let i = ir(`NAME.${e}`, t);
-	return n ? `${i} (${ir(n, r)})` : i;
-}
-function er(e) {
-	let t = game.settings.get("wfrp4e-compatibility-box", "argonCombatItemPatterns") ?? "*Draught*, *Potion*", n = On(String(t)), r = [...e.items];
-	return Q(r, An(Z(r), n));
-}
-function tr(e) {
-	return Number(e?.quantity?.value ?? e?.system?.quantity?.value);
+function tr({ nameKey: e, fallback: t, specKey: n, specFallback: r }) {
+	let i = or(`NAME.${e}`, t);
+	return n ? `${i} (${or(n, r)})` : i;
 }
 function nr(e) {
-	return yn(X(e));
+	let t = game.settings.get("wfrp4e-compatibility-box", "argonCombatItemPatterns") ?? "*Draught*, *Potion*", n = An(String(t)), r = [...e.items];
+	return Q(r, Mn(Z(r), n));
 }
 function rr(e) {
-	return bn(X(e));
+	return Number(e?.quantity?.value ?? e?.system?.quantity?.value);
 }
-function ir(e, t) {
+function ir(e) {
+	return xn(X(e));
+}
+function ar(e) {
+	return Sn(X(e));
+}
+function or(e, t) {
 	let n = game.i18n.localize(e);
 	return n === e ? t : n;
 }
 //#endregion
 //#region src/module/integrations/enhancedcombathud/buttons.ts
-function ar(e) {
+function sr(e) {
 	let t = e.ARGON;
 	class n extends t.MAIN.BUTTONS.ItemButton {
 		get hasTooltip() {
@@ -1231,13 +1239,13 @@ function ar(e) {
 			return {
 				title: this.item.name,
 				description: e,
-				details: qn(this.item)
+				details: Yn(this.item)
 			};
 		}
 	}
 	class r extends n {
 		get quantity() {
-			let e = tr(this.item);
+			let e = rr(this.item);
 			return Number.isNumeric(e) ? e : null;
 		}
 		async _onLeftClick(e) {
@@ -1308,7 +1316,7 @@ function ar(e) {
 			return "wfrp4e-compatibility-box.Argon.Panel.Actions";
 		}
 		async _getButtons() {
-			let e = Yn(this.actor), t = Xn(this.actor), s = Zn(this.actor), c = Qn(this.actor).map((e) => e.type === "characteristic" ? new i(e) : new n({ item: e.item })), l = er(this.actor), u = [
+			let e = Zn(this.actor), t = Qn(this.actor), s = $n(this.actor), c = er(this.actor).map((e) => e.type === "characteristic" ? new i(e) : new n({ item: e.item })), ee = nr(this.actor), l = [
 				new n({
 					item: null,
 					isWeaponSet: !0,
@@ -1322,7 +1330,7 @@ function ar(e) {
 					inActionPanel: !0
 				}),
 				new a()
-			], ee = [
+			], te = [
 				[
 					"weapons",
 					"wfrp4e-compatibility-box.Argon.Group.Weapons",
@@ -1344,23 +1352,23 @@ function ar(e) {
 					s
 				]
 			];
-			for (let [e, t, n] of ee) n.length && u.push(new o({
+			for (let [e, t, n] of te) n.length && l.push(new o({
 				id: e,
 				label: t,
 				items: n
 			}));
-			return c.length && u.push(new o({
+			return c.length && l.push(new o({
 				id: "combat-skills",
 				label: "wfrp4e-compatibility-box.Argon.Group.Skills",
 				buttons: c,
-				icon: `${A}/dodging.webp`
-			})), l.length && u.push(new o({
+				icon: `${j}/dodging.webp`
+			})), ee.length && l.push(new o({
 				id: "combat-items",
 				label: "wfrp4e-compatibility-box.Argon.Group.Items",
-				items: l,
-				icon: `${A}/drink-me.webp`,
+				items: ee,
+				icon: `${j}/drink-me.webp`,
 				buttonClass: r
-			})), u;
+			})), l;
 		}
 	}
 	return {
@@ -1370,12 +1378,12 @@ function ar(e) {
 }
 //#endregion
 //#region src/module/integrations/enhancedcombathud/legacy-module-check.ts
-function or() {
+function cr() {
 	let e = CONFIG.ARGON?.CORE?.CoreHud;
 	if (!e || typeof e.prototype.performModuleCheck != "function") throw Error("Argon CoreHud.performModuleCheck is unavailable.");
 	let t = e.prototype.performModuleCheck;
 	e.prototype.performModuleCheck = function(...e) {
-		if (!g("argonCombatHud")) return t.apply(this, e);
+		if (!h("argonCombatHud")) return t.apply(this, e);
 	};
 }
 //#endregion
@@ -1383,7 +1391,7 @@ function or() {
 function $(e, t) {
 	if (!Number.isFinite(e) || e < 0) throw Error(`Argon movement ${t} must be a finite, non-negative number.`);
 }
-function sr(e, t, n) {
+function lr(e, t, n) {
 	$(e, "move score"), $(t, "maximum distance"), $(n, "used distance");
 	let r = Math.max(Math.round(e), 1), i = t > 0 ? t / r : 0, a = t ? Math.floor(n / t) : 0, o = t ? n % t : 0, s = i ? Math.min(Math.ceil(o / i), r) : 0, c = (a + 1) * t;
 	return {
@@ -1395,32 +1403,32 @@ function sr(e, t, n) {
 		usedBubbles: s
 	};
 }
-function cr(e) {
+function ur(e) {
 	return $(e, "display distance"), Number.isInteger(e) ? String(e) : e.toFixed(1);
 }
 //#endregion
 //#region src/module/integrations/enhancedcombathud/panels.ts
-function lr(e, t) {
+function dr(e, t) {
 	let n = typeof e == "number" ? e : typeof e == "string" && e.trim() ? Number(e) : NaN;
 	if (!Number.isFinite(n)) throw Error(`WFRP actor movement ${t} must be numeric.`);
 	return n;
 }
-function ur(e) {
+function fr(e) {
 	if (typeof e != "string" || !e.trim()) throw Error("The active scene must define movement units for the Argon movement HUD.");
 	return e;
 }
-function dr(e) {
+function pr(e) {
 	let t = e.ARGON;
 	class n extends t.PORTRAIT.PortraitPanel {
 		get configurationTemplate() {
-			return Ye;
+			return Xe;
 		}
 		async _getButtons() {
 			let e = await super._getButtons(), t = e.find((e) => e.id === "open-sheet");
 			return t && (t.icon = "fas fa-user", t.label = "Open Actor Sheet"), e;
 		}
 		async _onConfigure(e) {
-			await Vn(this.actor), await super._onConfigure(e);
+			await Un(this.actor), await super._onConfigure(e);
 		}
 		get description() {
 			return this.actor.type === "character" ? this.actor.details.career.value : this.actor.details.species.value;
@@ -1445,7 +1453,7 @@ function dr(e) {
 			return "wfrp4e-compatibility-box.Argon.Drawer.Title";
 		}
 		get categories() {
-			let e = Xe.map((e) => {
+			let e = Ze.map((e) => {
 				let n = this.actor.characteristics[e], r = async () => {
 					await (await this.actor.setupCharacteristic(e)).roll();
 				};
@@ -1463,7 +1471,7 @@ function dr(e) {
 						onClick: r
 					}
 				]);
-			}), n = Jn(this.actor).sort((e, t) => e.name.localeCompare(t.name)).map((e) => {
+			}), n = Xn(this.actor).sort((e, t) => e.name.localeCompare(t.name)).map((e) => {
 				let n = async () => {
 					await (await this.actor.setupSkill(e)).roll();
 				};
@@ -1521,13 +1529,13 @@ function dr(e) {
 	}
 	class i extends t.MovementHud {
 		get moveScore() {
-			return lr(this.actor.details.move.value, "value");
+			return dr(this.actor.details.move.value, "value");
 		}
 		get movementMax() {
-			return lr(this.actor.details.move.run, "run distance");
+			return dr(this.actor.details.move.run, "run distance");
 		}
 		get movementUnits() {
-			return ur(canvas.scene.grid.units);
+			return fr(canvas.scene.grid.units);
 		}
 		get movementColor() {
 			return this.movementMax ? super.movementColor : "base-movement";
@@ -1535,16 +1543,16 @@ function dr(e) {
 		updateMovementUsed() {
 			let e = this.token.document.movementHistory;
 			if (!Array.isArray(e)) throw Error("The active token must expose movement history for the Argon movement HUD.");
-			this.movementUsed = Math.round(e.reduce((e, t, n) => (e += lr(t?.cost, `history entry ${n + 1} cost`), e), 0));
+			this.movementUsed = Math.round(e.reduce((e, t, n) => (e += dr(t?.cost, `history entry ${n + 1} cost`), e), 0));
 		}
 		updateMovement() {
 			this.updateMovementUsed();
-			let e = this.movementMax, t = sr(this.moveScore, e, this.movementUsed), n = this.movementColor, r = game.i18n.localize(t.movementBlock === 0 ? "wfrp4e-compatibility-box.Argon.Movement.Run" : "wfrp4e-compatibility-box.Argon.Movement.Sprint"), i = this.element.querySelector(".movement-spaces"), a = "";
+			let e = this.movementMax, t = lr(this.moveScore, e, this.movementUsed), n = this.movementColor, r = game.i18n.localize(t.movementBlock === 0 ? "wfrp4e-compatibility-box.Argon.Movement.Run" : "wfrp4e-compatibility-box.Argon.Movement.Sprint"), i = this.element.querySelector(".movement-spaces"), a = "";
 			for (let e = 0; e < t.availableBubbles; e++) a += `<div class="movement-space ${n}"></div>`;
 			for (let e = 0; e < t.usedBubbles; e++) a += "<div class=\"movement-space\"></div>";
-			this.element.querySelector(".movement-current").innerText = `${r} ${cr(t.remainingDistance)} ${this.movementUnits}`, this.element.querySelector(".movement-max").innerText = `${cr(t.blockLimit)} ${this.movementUnits}`, this.element.title = game.i18n.format("wfrp4e-compatibility-box.Argon.Movement.Hint", {
+			this.element.querySelector(".movement-current").innerText = `${r} ${ur(t.remainingDistance)} ${this.movementUnits}`, this.element.querySelector(".movement-max").innerText = `${ur(t.blockLimit)} ${this.movementUnits}`, this.element.title = game.i18n.format("wfrp4e-compatibility-box.Argon.Movement.Hint", {
 				move: this.moveScore,
-				distance: cr(t.bubbleDistance),
+				distance: ur(t.bubbleDistance),
 				units: this.movementUnits
 			}), i.innerHTML = a;
 		}
@@ -1557,7 +1565,7 @@ function dr(e) {
 }
 //#endregion
 //#region src/module/integrations/enhancedcombathud/weapon-sets.ts
-function fr(e) {
+function mr(e) {
 	let t = e.ARGON;
 	class n extends t.WeaponSets {
 		async getDefaultSets() {
@@ -1582,17 +1590,17 @@ function fr(e) {
 			let t = JSON.parse(e.dataTransfer.getData("text/plain"));
 			if (t.type !== "Item") return;
 			let n = await fromUuid(t.uuid);
-			if (!nr(n) || n.actor !== this.actor) throw Error(`${f} | Weapon sets only accept weapons or weapon-like traits owned by the active actor.`);
+			if (!ir(n) || n.actor !== this.actor) throw Error(`${d} | Weapon sets only accept weapons or weapon-like traits owned by the active actor.`);
 			let r = e.currentTarget.dataset.set, i = e.currentTarget.dataset.slot;
-			if (!r || !i) throw Error(`${f} | Argon weapon-set drop target has no set or slot identifier.`);
+			if (!r || !i) throw Error(`${d} | Argon weapon-set drop target has no set or slot identifier.`);
 			let a = foundry.utils.deepClone(this.actor.getFlag("enhancedcombathud", "weaponSets") ?? {});
 			a[r] ??= {}, a[r][i] = n.uuid, await this.actor.setFlag("enhancedcombathud", "weaponSets", a), await this.render();
 		}
 		async _onSetChange({ sets: e, active: t }) {
-			if (!Bn(this.actor, "switchEquip")) return;
-			let n = Mn(Object.entries(e).map(([e, t]) => ({
+			if (!Hn(this.actor, "switchEquip")) return;
+			let n = Pn(Object.entries(e).map(([e, t]) => ({
 				id: e,
-				items: Object.values(t).filter(Boolean).filter(rr).map((e) => ({
+				items: Object.values(t).filter(Boolean).filter(ar).map((e) => ({
 					equipped: !!e.isEquipped,
 					id: e.id
 				}))
@@ -1604,9 +1612,9 @@ function fr(e) {
 }
 //#endregion
 //#region src/module/integrations/enhancedcombathud/register-integration.ts
-function pr() {
-	p("enhancedcombathud") && g("argonCombatHud") && (or(), Hooks.on("argonInit", (e) => {
-		let { WFRPActionPanel: t } = ar(e), { WFRPDrawerPanel: n, WFRPMovementHud: r, WFRPPortraitPanel: i } = dr(e), a = fr(e);
+function hr() {
+	f("enhancedcombathud") && h("argonCombatHud") && (cr(), Hooks.on("argonInit", (e) => {
+		let { WFRPActionPanel: t } = sr(e), { WFRPDrawerPanel: n, WFRPMovementHud: r, WFRPPortraitPanel: i } = pr(e), a = mr(e);
 		e.definePortraitPanel(i), e.defineDrawerPanel(n), e.defineMainPanels([t, e.ARGON.PREFAB.PassTurnPanel]), e.defineMovementHud(r), e.defineWeaponSets(a), e.defineSupportedActorTypes([
 			"character",
 			"npc",
@@ -1616,106 +1624,106 @@ function pr() {
 }
 //#endregion
 //#region src/module/integrations/paper-doll-argon/panels.ts
-function mr(e) {
-	let t = e.ARGON, { WFRPCombatItemButton: n } = ar(e);
+function gr(e) {
+	let t = e.ARGON, { WFRPCombatItemButton: n } = sr(e);
 	class r extends t.MAIN.ActionPanel {
 		get label() {
 			return "wfrp4e-compatibility-box.PaperDollArgon.Panel.QuickItems";
 		}
 		async _getButtons() {
-			return Wt(this.actor).map((e) => new n({ item: e }));
+			return Kt(this.actor).map((e) => new n({ item: e }));
 		}
 	}
 	return { PaperDollQuickItemsPanel: r };
 }
 //#endregion
 //#region src/module/integrations/paper-doll-argon/report-bridge-error.ts
-function hr(e) {
+function _r(e) {
 	return e instanceof Error ? e.message : String(e);
 }
-function gr(e, t) {
-	Oe(`${fe}: ${e}. ${hr(t)}`, t);
+function vr(e, t) {
+	C(`${pe}: ${e}. ${_r(t)}`, t);
 }
-function _r(e, t) {
-	e.catch((e) => gr(t, e));
+function yr(e, t) {
+	e.catch((e) => vr(t, e));
 }
 //#endregion
 //#region src/module/integrations/paper-doll-argon/register-integration.ts
-function vr() {
-	return g("paperDoll") && g("argonCombatHud") && g("paperDollArgonBridge");
-}
-function yr(e, t) {
-	!vr() || !v(e) || Gt(t) && _r(Kt(e), `could not synchronize Paper Doll slots with Argon for ${e.uuid}`);
-}
 function br() {
-	p("fvtt-paper-doll-ui") && p("enhancedcombathud") && vr() && (Hooks.on("argonInit", (e) => {
-		let { PaperDollQuickItemsPanel: t } = mr(e);
+	return h("paperDoll") && h("argonCombatHud") && h("paperDollArgonBridge");
+}
+function xr(e, t) {
+	!br() || !v(e) || qt(t) && yr(Jt(e), `could not synchronize Paper Doll slots with Argon for ${e.uuid}`);
+}
+function Sr() {
+	f("fvtt-paper-doll-ui") && f("enhancedcombathud") && br() && (Hooks.on("argonInit", (e) => {
+		let { PaperDollQuickItemsPanel: t } = gr(e);
 		e.defineMainPanels([t]);
-	}), Hooks.on("updateActor", yr));
+	}), Hooks.on("updateActor", xr));
 }
 //#endregion
 //#region src/module/integrations/splatter/configuration-menu.ts
-var xr = `${f}.Splatter.Configuration`;
-function Sr(e) {
-	return game?.i18n.localize(`${xr}.${e}`) ?? e;
+var Cr = `${d}.Splatter.Configuration`;
+function wr(e) {
+	return game?.i18n.localize(`${Cr}.${e}`) ?? e;
 }
-var Cr = class extends foundry.applications.api.ApplicationV2 {
+var Tr = class extends foundry.applications.api.ApplicationV2 {
 	async render(e) {
 		try {
-			await un(), ui?.notifications?.info(Sr("Success"));
+			await fn(), ui?.notifications?.info(wr("Success"));
 		} catch (e) {
-			Oe(Sr("Error"), e);
+			C(wr("Error"), e);
 		}
 		return this;
 	}
-}, wr = `${f}.Splatter.Configuration`;
-function Tr() {
-	if (p("splatter")) {
-		if (!game) throw Error(`${f} | Foundry game is unavailable during Splatter registration.`);
-		game.settings.registerMenu(f, "configureSplatter", {
-			hint: `${wr}.Hint`,
+}, Er = `${d}.Splatter.Configuration`;
+function Dr() {
+	if (f("splatter")) {
+		if (!game) throw Error(`${d} | Foundry game is unavailable during Splatter registration.`);
+		game.settings.registerMenu(d, "configureSplatter", {
+			hint: `${Er}.Hint`,
 			icon: "fa-solid fa-droplet",
-			label: `${wr}.Button`,
-			name: `${wr}.Name`,
+			label: `${Er}.Button`,
+			name: `${Er}.Name`,
 			restricted: !0,
-			type: Cr
+			type: Tr
 		});
 	}
 }
 //#endregion
 //#region src/module/patches/wfrp4e/repair-data-model-migrations.ts
-var Er = /* @__PURE__ */ new WeakSet();
-function Dr(e) {
+var Or = /* @__PURE__ */ new WeakSet();
+function kr(e) {
 	let t = e.migrateData;
-	return typeof t != "function" || Er.has(e) ? !1 : (e.migrateData = function(e) {
+	return typeof t != "function" || Or.has(e) ? !1 : (e.migrateData = function(e) {
 		let n = t.call(this, e);
 		return n === void 0 ? e : n;
-	}, Er.add(e), !0);
+	}, Or.add(e), !0);
 }
-function Or() {
-	return [...Object.values(CONFIG.Actor.dataModels), ...Object.values(CONFIG.Item.dataModels)].reduce((e, t) => e + Number(Dr(t)), 0);
+function Ar() {
+	return [...Object.values(CONFIG.Actor.dataModels), ...Object.values(CONFIG.Item.dataModels)].reduce((e, t) => e + Number(kr(t)), 0);
 }
 //#endregion
 //#region src/module/patches/wfrp4e/repair-roll-modes.ts
-function kr() {
+function jr() {
 	let e = game?.wfrp4e?.config, t = CONFIG.ChatMessage.modes;
 	return !e || !t ? !1 : (e.rollModes = foundry.utils.deepClone(t), !0);
 }
 //#endregion
 //#region src/module/patches/wfrp4e/apply-compatibility-patches.ts
-function Ar() {
-	game?.system.id === "wfrp4e" && (kr(), Or());
+function Mr() {
+	game?.system.id === "wfrp4e" && (jr(), Ar());
 }
 //#endregion
 //#region src/module/hooks/register-module-hooks.ts
-function jr() {
+function Nr() {
 	Hooks.once("init", () => {
-		Ar(), Ln(), fn(), pr(), It(), br(), Tr();
+		Mr(), zn(), mn(), hr(), Rt(), Sr(), Dr();
 	});
 }
 //#endregion
 //#region src/main.ts
-jr();
+Nr();
 //#endregion
 
 //# sourceMappingURL=wfrp4e-compatibility-box.mjs.map
