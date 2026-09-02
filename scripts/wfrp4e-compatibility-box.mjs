@@ -1677,15 +1677,39 @@ function Cr() {
 	}
 }
 //#endregion
+//#region src/module/patches/wfrp4e/repair-data-model-migrations.ts
+var wr = /* @__PURE__ */ new WeakSet();
+function Tr(e) {
+	let t = e.migrateData;
+	return typeof t != "function" || wr.has(e) ? !1 : (e.migrateData = function(e) {
+		let n = t.call(this, e);
+		return n === void 0 ? e : n;
+	}, wr.add(e), !0);
+}
+function Er() {
+	return [...Object.values(CONFIG.Actor.dataModels), ...Object.values(CONFIG.Item.dataModels)].reduce((e, t) => e + Number(Tr(t)), 0);
+}
+//#endregion
+//#region src/module/patches/wfrp4e/repair-roll-modes.ts
+function Dr() {
+	let e = game?.wfrp4e?.config, t = CONFIG.ChatMessage.modes;
+	return !e || !t ? !1 : (e.rollModes = foundry.utils.deepClone(t), !0);
+}
+//#endregion
+//#region src/module/patches/wfrp4e/apply-compatibility-patches.ts
+function Or() {
+	game?.system.id === "wfrp4e" && (Dr(), Er());
+}
+//#endregion
 //#region src/module/hooks/register-module-hooks.ts
-function wr() {
+function kr() {
 	Hooks.once("init", () => {
-		Fn(), un(), dr(), Pt(), vr(), Cr();
+		Or(), Fn(), un(), dr(), Pt(), vr(), Cr();
 	});
 }
 //#endregion
 //#region src/main.ts
-wr();
+kr();
 //#endregion
 
 //# sourceMappingURL=wfrp4e-compatibility-box.mjs.map
