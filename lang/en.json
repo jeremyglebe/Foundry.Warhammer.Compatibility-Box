@@ -16,6 +16,10 @@
         "paperDollArgonBridge": {
           "Name": "Enable Paper Doll–Argon equipment bridge",
           "Hint": "Shows Paper Doll ready and quick-use items on Argon and copies Paper Doll's physical hand slots into the active Argon weapon set. Requires both features and a reload when changed."
+        },
+        "bossBar": {
+          "Name": "Enable Boss Bar compatibility",
+          "Hint": "Offers WFRP4e setup, removes the WFRP application frame from Boss Bar, and enables configurable combat selection and Up in Arms bars. Requires Boss Bar and a reload when changed."
         }
       },
       "ArgonCombatItemPatterns": {
@@ -107,6 +111,35 @@
         "Success": "Splatter is configured for WFRP4e.",
         "Error": "Splatter could not be configured. See the console for details."
       }
+    },
+    "BossBar": {
+      "SetupTitle": "Configure Boss Bar for WFRP4e?",
+      "SetupDescription": "Configure Boss Bar with WFRP4e defaults?",
+      "SetupCore": "The bar will use current and maximum Wounds, decreasing as Wounds are lost.",
+      "SetupUpInArms": "Use Boss Bar’s Segmented theme by default for critical capacity, with a thin Wounds bar above it.",
+      "SetupCustomization": "Existing boss selections and themes stay editable. Keep My Settings dismisses this suggestion for the current injury rules.",
+      "Configure": "Apply WFRP4e Boss Bar Preset",
+      "Keep": "Keep My Settings",
+      "Later": "Ask Next Time",
+      "Configured": "Boss Bar is configured for WFRP4e.",
+      "Error": "Boss Bar compatibility encountered a problem. See the console for details.",
+      "CriticalCapacity": "Critical injury capacity",
+      "Wounds": "Wounds",
+      "Settings": {
+        "automatic": {
+          "Name": "Automatically show combat bosses",
+          "Hint": "At combat start, adds hostile non-player-owned enemies with a Boss trait, or selects enemies with 30+ maximum Wounds, Grim, and Leader or Champion. Existing manual selections are preserved."
+        },
+        "stacked": {
+          "Name": "Stack critical capacity and Wounds bars",
+          "Hint": "When WFRP’s Up in Arms critical injury option is enabled and Boss Bar uses WFRP Wounds paths, show a large primary critical capacity bar with a smaller, thinner Wounds bar directly above it. Disable to use Boss Bar’s normal health display."
+        },
+        "woundsStyle": {
+          "Name": "Stacked Wounds bar theme",
+          "Hint": "Theme for the thin Wounds bar above the primary critical capacity bar. Edit these themes in Boss Bar’s theme configuration. The primary critical capacity bar uses the boss’s selected Boss Bar theme."
+        }
+      },
+      "AcceptSetup": "Configure for WFRP4e"
     }
   }
 }
