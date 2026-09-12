@@ -122,14 +122,6 @@ function f(e) {
 //#endregion
 //#region src/module/settings/optional-features.ts
 var p = {
-	faNexus: {
-		settingKey: "faNexusEnabled",
-		targetModuleIds: ["fa-nexus"]
-	},
-	scenePacker: {
-		settingKey: "scenePackerEnabled",
-		targetModuleIds: ["scene-packer"]
-	},
 	bossBar: {
 		settingKey: "bossBarEnabled",
 		targetModuleIds: ["bossbar"]
@@ -816,7 +808,7 @@ async function $t(e) {
 }
 //#endregion
 //#region src/functions/integrations/splatter/configuration.ts
-var en = "details.species.value", tn = "#a51414d8", nn = "#7e1717dc", rn = "#b31f18d8", an = "#b01832d8", on = "#861a24d8", sn = "#541e1ed8", M = "#6a0e0ed8", N = "#6f3518e0", P = "#621010e0", cn = "#771616dc", F = "#440707d8", I = "#14101490", L = "#0b080de8", ln = [
+var en = "details.species.value", tn = "#a51414d8", nn = "#7e1717dc", rn = "#b31f18d8", an = "#b01832d8", on = "#861a24d8", sn = "#541e1ed8", M = "#6a0e0ed8", N = "#6f3518e0", P = "#621010e0", cn = "#771616dc", F = "#440707d8", ln = "#14101490", I = "#0b080de8", un = [
 	["Jabberslythe", "#78d61be8"],
 	["Chameleon Skink", M],
 	["Kroxigor", M],
@@ -828,16 +820,16 @@ var en = "details.species.value", tn = "#a51414d8", nn = "#7e1717dc", rn = "#b31
 	["Ogre Gorger", sn],
 	["Gorger", sn],
 	["Orca", tn],
-	["Bloodletter", L],
-	["Chaos Fury", L],
-	["Blue Horror", L],
-	["Pink Horror", L],
-	["Nurgling", L],
-	["Greater Daemon", L],
-	["Daemon Prince", L],
-	["Lesser Demon", L],
-	["Daemon", L],
-	["Demon", L],
+	["Bloodletter", I],
+	["Chaos Fury", I],
+	["Blue Horror", I],
+	["Pink Horror", I],
+	["Nurgling", I],
+	["Greater Daemon", I],
+	["Daemon Prince", I],
+	["Lesser Demon", I],
+	["Daemon", I],
+	["Demon", I],
 	["Rat Ogre", cn],
 	["Wolf Rat", cn],
 	["Skaven", cn],
@@ -859,10 +851,10 @@ var en = "details.species.value", tn = "#a51414d8", nn = "#7e1717dc", rn = "#b31
 	["Orc", N],
 	["Snotling", N],
 	["Squig", N],
-	["Skeleton", I],
-	["Ghost", I],
-	["Tomb Banshee", I],
-	["Banshee", I],
+	["Skeleton", ln],
+	["Ghost", ln],
+	["Tomb Banshee", ln],
+	["Banshee", ln],
 	["Undead", F],
 	["Vampire", F],
 	["Ghoul", F],
@@ -879,30 +871,30 @@ var en = "details.species.value", tn = "#a51414d8", nn = "#7e1717dc", rn = "#b31
 	["welf", on],
 	["Ogre", sn]
 ];
-function un() {
+function dn() {
 	let e = {};
-	for (let [t, n] of ln) e[t] = n, e[t.toLowerCase()] ??= n;
+	for (let [t, n] of un) e[t] = n, e[t.toLowerCase()] ??= n;
 	return e;
 }
-function dn(e) {
+function fn(e) {
 	return !e || typeof e != "object" || Array.isArray(e) ? {} : Object.fromEntries(Object.entries(e).filter((e) => e[0].length > 0 && typeof e[1] == "string"));
 }
-function fn(e = {}) {
-	let t = un();
+function pn(e = {}) {
+	let t = dn();
 	for (let [n, r] of Object.entries(e)) {
 		let e = t[n] ?? (r ? t[r] : void 0) ?? tn;
 		t[n] ??= e, r && (t[r] ??= e);
 	}
 	return t;
 }
-function pn(e, t = {}) {
-	let n = dn(e);
-	for (let [e, r] of Object.entries(fn(t))) n[e] ??= r;
+function mn(e, t = {}) {
+	let n = fn(e);
+	for (let [e, r] of Object.entries(pn(t))) n[e] ??= r;
 	return n;
 }
 //#endregion
 //#region src/module/integrations/splatter/constants.ts
-var mn = "splatter", hn = "useBloodsheet", gn = "BloodSheetData", _n = "creatureType", vn = [
+var L = "splatter", hn = "useBloodsheet", gn = "BloodSheetData", _n = "creatureType", vn = [
 	gn,
 	_n,
 	hn
@@ -922,8 +914,8 @@ async function xn() {
 	if (!f("splatter")) throw Error("Splatter must be active before it can be configured.");
 	if (!game.user?.isGM) throw Error("Only a gamemaster can change Splatter's world settings.");
 	bn();
-	let e = pn(game.settings.get(mn, gn), yn());
-	return await game.settings.set(mn, gn, e), await game.settings.set(mn, _n, en), await game.settings.set(mn, hn, !0), {
+	let e = mn(game.settings.get(L, gn), yn());
+	return await game.settings.set(L, gn, e), await game.settings.set(L, _n, en), await game.settings.set(L, hn, !0), {
 		automaticBloodColors: !0,
 		bloodColorCount: Object.keys(e).length,
 		speciesPath: en
@@ -1424,7 +1416,7 @@ function Sr(e) {
 }
 function Cr() {
 	if (!game) throw Error(`${d} | Foundry game is unavailable during settings registration.`);
-	G(game.settings, "argonCombatHud"), G(game.settings, "bossBar"), G(game.settings, "scenePacker"), G(game.settings, "faNexus"), G(game.settings, "paperDoll"), G(game.settings, "paperDollArgonBridge"), Sr(game.settings);
+	G(game.settings, "argonCombatHud"), G(game.settings, "bossBar"), G(game.settings, "paperDoll"), G(game.settings, "paperDollArgonBridge"), Sr(game.settings);
 }
 //#endregion
 //#region src/module/integrations/enhancedcombathud/actor-flags.ts
@@ -2050,7 +2042,7 @@ function mi(e) {
 //#endregion
 //#region src/module/integrations/scene-packer/register-integration.ts
 function hi() {
-	f("scene-packer") && (!h("scenePacker") || game?.system.id !== "wfrp4e" || typeof ScenePacker < "u" && mi(ScenePacker));
+	f("scene-packer") && game?.system.id === "wfrp4e" && typeof ScenePacker < "u" && mi(ScenePacker);
 }
 //#endregion
 //#region src/module/integrations/fa-nexus/repair-forge-owner-detection.ts
@@ -2066,7 +2058,7 @@ function _i(e, t) {
 //#endregion
 //#region src/module/integrations/fa-nexus/register-integration.ts
 async function vi() {
-	if (!f("fa-nexus") || !h("faNexus") || game?.system.id !== "wfrp4e" || typeof ForgeAPI > "u") return;
+	if (!f("fa-nexus") || game?.system.id !== "wfrp4e" || typeof ForgeAPI > "u") return;
 	let e = Array.from(document.querySelectorAll("script[type=\"module\"][src]")).find((e) => {
 		let t = new URL(e.src).pathname;
 		return /\/modules\/fa-nexus\/(?:[^/]+\/)?scripts\/core\/forge-integration\.js$/.test(t);

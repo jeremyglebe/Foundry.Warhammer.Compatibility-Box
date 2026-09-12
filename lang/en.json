@@ -5,14 +5,6 @@
     },
     "Settings": {
       "Features": {
-        "faNexus": {
-          "Name": "Enable FA Nexus Forge compatibility",
-          "Hint": "Uses Forge's world-owner metadata for FA Nexus asset URL detection when available, retaining Nexus's fallback otherwise. Requires FA Nexus and a reload when changed."
-        },
-        "scenePacker": {
-          "Name": "Enable Scene Packer compatibility for MAD maps",
-          "Hint": "Allows MAD map packs to initialize when their ignored prefab compendium is unavailable in this world. Existing exclusions are retained. Requires Scene Packer and a reload when changed."
-        },
         "argonCombatHud": {
           "Name": "Enable Argon Combat HUD compatibility",
           "Hint": "Provides WFRP4e panels, actions, movement, weapon sets, and actor configuration for Argon. Requires an enabled Argon - Combat HUD module and a reload when changed."
