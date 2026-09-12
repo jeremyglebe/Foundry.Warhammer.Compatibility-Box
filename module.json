@@ -2,7 +2,7 @@
   "id": "wfrp4e-compatibility-box",
   "title": "Drowsy's WFRP4e Compatibility Box",
   "description": "Optional compatibility features and patches for WFRP4e and supported Foundry VTT modules.",
-  "version": "1.1.14",
+  "version": "1.1.15",
   "authors": [
     {
       "name": "Jeremy Glebe"
@@ -40,6 +40,20 @@
         "type": "module",
         "compatibility": {
           "minimum": "5.0.1"
+        }
+      },
+      {
+        "id": "scene-packer",
+        "type": "module",
+        "compatibility": {
+          "minimum": "2.8.12"
+        }
+      },
+      {
+        "id": "fa-nexus",
+        "type": "module",
+        "compatibility": {
+          "minimum": "0.5.3"
         }
       }
     ],
@@ -91,5 +105,5 @@
   ],
   "url": "https://github.com/jeremyglebe/wfrp4e-compatibility-box",
   "manifest": "https://github.com/jeremyglebe/wfrp4e-compatibility-box/releases/latest/download/module.json",
-  "download": "https://github.com/jeremyglebe/wfrp4e-compatibility-box/releases/download/v1.1.14/module.zip"
+  "download": "https://github.com/jeremyglebe/wfrp4e-compatibility-box/releases/download/v1.1.15/module.zip"
 }
