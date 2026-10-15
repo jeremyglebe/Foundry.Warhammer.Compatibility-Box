@@ -4,6 +4,16 @@
       "Title": "Drowsy's WFRP4e Compatibility Box"
     },
     "Settings": {
+      "WfrpFolders": {
+        "keepWfrpImportedContentTidy": {
+          "Name": "Keep WFRP Imported Content Tidy?",
+          "Hint": "Group official WFRP imports under WFRP in each world directory. Deep folder names are joined with / to fit Foundry's limit. Disabling leaves the current folders in place."
+        },
+        "keepWfrpCompendiumsTidy": {
+          "Name": "Keep WFRP Compendiums Tidy?",
+          "Hint": "Group official WFRP compendiums under WFRP in the sidebar, preserving their folders within Foundry's depth limit. Disabling leaves the current folders in place."
+        }
+      },
       "Features": {
         "argonCombatHud": {
           "Name": "Enable Argon Combat HUD compatibility",
