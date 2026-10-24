@@ -2,7 +2,7 @@
   "id": "wfrp4e-compatibility-box",
   "title": "Drowsy's WFRP4e Compatibility Box",
   "description": "Optional compatibility features and patches for WFRP4e and supported Foundry VTT modules.",
-  "version": "1.1.17",
+  "version": "1.1.18",
   "authors": [
     {
       "name": "Jeremy Glebe"
@@ -105,5 +105,5 @@
   ],
   "url": "https://github.com/jeremyglebe/Foundry.Warhammer.Compatibility-Box",
   "manifest": "https://github.com/jeremyglebe/Foundry.Warhammer.Compatibility-Box/releases/latest/download/module.json",
-  "download": "https://github.com/jeremyglebe/Foundry.Warhammer.Compatibility-Box/releases/download/v1.1.17/module.zip"
+  "download": "https://github.com/jeremyglebe/Foundry.Warhammer.Compatibility-Box/releases/download/v1.1.18/module.zip"
 }
