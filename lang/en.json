@@ -15,6 +15,10 @@
         }
       },
       "Features": {
+        "healthEstimate": {
+          "Name": "Enable Health Estimate compatibility",
+          "Hint": "Offers WFRP Wounds wording and uses the Dead condition for death detection in core and Up in Arms. Requires Health Estimate 36.1.0 or newer and a reload when changed. Saved NPCs Just Die settings are untouched by the runtime patch."
+        },
         "argonCombatHud": {
           "Name": "Enable Argon Combat HUD compatibility",
           "Hint": "Provides WFRP4e panels, actions, movement, weapon sets, and actor configuration for Argon. Requires an enabled Argon - Combat HUD module and a reload when changed."
