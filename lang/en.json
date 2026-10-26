@@ -34,6 +34,14 @@
         "bossBar": {
           "Name": "Enable Boss Bar compatibility",
           "Hint": "Offers WFRP4e setup, removes the WFRP application frame from Boss Bar, and enables configurable combat selection and Up in Arms bars. Requires Boss Bar and a reload when changed."
+        },
+        "simpleCalendar": {
+          "Name": "Enable Simple Calendar Reborn compatibility",
+          "Hint": "Offer the shared WFRP Imperial calendar preset and coordinate world time with Simple Timekeeping when enabled. Applying a preset requires GM review."
+        },
+        "simpleTimekeeping": {
+          "Name": "Enable Simple Timekeeping & Calendar compatibility",
+          "Hint": "Offer the shared WFRP Imperial calendar and fix years, weekdays and date picking when it is selected. Works alone or alongside Simple Calendar Reborn."
         }
       },
       "ArgonCombatItemPatterns": {
