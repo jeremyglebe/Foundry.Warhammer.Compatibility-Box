@@ -766,7 +766,7 @@ function it(e, t, n) {
 //#region src/module/foundry/settings/conflicts/sources.ts
 function M(e, t) {
 	let r = [];
-	for (let [e, t] of game?.modules ?? []) {
+	for (let [e, t] of game?.modules.entries() ?? []) {
 		if (!t.active) continue;
 		let i = t.api?.settingsPresets;
 		if (i?.version === 1) for (let a of i.getPresets()) r.push({
@@ -2974,7 +2974,7 @@ function Fa(e, t) {
 }
 function Ia() {
 	s("fvtt-paper-doll-ui") && s("enhancedcombathud") && Pa() && (Hooks.on("argonInit", (e) => {
-		if (!e || typeof e != "object" || !("defineMainPanels" in e) || typeof e.defineMainPanels != "function") throw Error("Argon main panel registration API is unavailable.");
+		if (!e || typeof e != "object" && typeof e != "function" || !("defineMainPanels" in e) || typeof e.defineMainPanels != "function") throw Error("Argon main panel registration API is unavailable.");
 		let { PaperDollQuickItemsPanel: t } = Aa(e);
 		e.defineMainPanels([t]);
 	}), Hooks.on("updateActor", Fa));
