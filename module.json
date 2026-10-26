@@ -2,7 +2,7 @@
   "id": "wfrp4e-compatibility-box",
   "title": "Drowsy's WFRP4e Compatibility Box",
   "description": "Optional compatibility features and patches for WFRP4e and supported Foundry VTT modules.",
-  "version": "1.1.18",
+  "version": "1.1.19",
   "authors": [
     {
       "name": "Jeremy Glebe"
@@ -82,28 +82,39 @@
   ],
   "packs": [
     {
-      "name": "compatibility-guide",
-      "label": "Compatibility Guide",
-      "path": "packs/compatibility-guide",
-      "type": "JournalEntry",
-      "ownership": {
-        "PLAYER": "OBSERVER",
-        "ASSISTANT": "OWNER"
-      }
-    },
-    {
       "name": "career-trapping-resolutions",
-      "label": "Career Trapping Resolutions",
-      "path": "packs/career-trapping-resolutions",
       "type": "Item",
       "system": "wfrp4e",
       "ownership": {
         "PLAYER": "OBSERVER",
         "ASSISTANT": "OWNER"
-      }
+      },
+      "label": "Career Trapping Resolutions",
+      "path": "packs/career-trapping-resolutions"
+    },
+    {
+      "name": "compatibility-guide",
+      "type": "JournalEntry",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "label": "Compatibility Guide",
+      "path": "packs/compatibility-guide"
     }
   ],
-  "url": "https://github.com/jeremyglebe/Foundry.Warhammer.Compatibility-Box",
-  "manifest": "https://github.com/jeremyglebe/Foundry.Warhammer.Compatibility-Box/releases/latest/download/module.json",
-  "download": "https://github.com/jeremyglebe/Foundry.Warhammer.Compatibility-Box/releases/download/v1.1.18/module.zip"
+  "packFolders": [
+    {
+      "name": "Drowsy's WFRP4e Compatibility Box",
+      "sorting": "a",
+      "packs": [
+        "career-trapping-resolutions",
+        "compatibility-guide"
+      ],
+      "folders": []
+    }
+  ],
+  "url": "https://github.com/jeremyglebe/wfrp4e-compatibility-box",
+  "manifest": "https://github.com/jeremyglebe/wfrp4e-compatibility-box/releases/latest/download/module.json",
+  "download": "https://github.com/jeremyglebe/wfrp4e-compatibility-box/releases/download/v1.1.19/module.zip"
 }

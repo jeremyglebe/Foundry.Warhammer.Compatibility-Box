@@ -73,7 +73,7 @@ function te(e, t) {
 	return [...u(e), ...ee(e, t)];
 }
 //#endregion
-//#region src/functions/patches/paper-doll/derive-paper-doll-slot-state.ts
+//#region src/module/functions/patches/paper-doll/derive-paper-doll-slot-state.ts
 function ne(e) {
 	return Object.fromEntries(Object.entries(e).map(([e, t]) => [e, { ...t }]));
 }
@@ -98,7 +98,7 @@ function oe(e, t) {
 	return JSON.stringify(e) === JSON.stringify(t);
 }
 //#endregion
-//#region src/functions/patches/paper-doll/is-paper-doll-slot-state.ts
+//#region src/module/functions/patches/paper-doll/is-paper-doll-slot-state.ts
 function se(e) {
 	return typeof e == "object" && !!e && !Array.isArray(e);
 }
@@ -115,12 +115,13 @@ function p(e) {
 //#region src/module/constants.ts
 var m = "wfrp4e-compatibility-box", ue = "Drowsy's WFRP4e Compatibility Box";
 //#endregion
-//#region src/module/integrations/is-module-active.ts
+//#region src/module/foundry/integrations/is-module-active.ts
 function h(e) {
-	return game?.modules.get(e)?.active === !0;
+	if (typeof game > "u" || !game) throw Error("Optional module integrations require an initialized Foundry game.");
+	return game.modules.get(e)?.active === !0;
 }
 //#endregion
-//#region src/module/settings/optional-features.ts
+//#region src/module/foundry/settings/optional-features.ts
 var g = {
 	bossBar: {
 		settingKey: "bossBarEnabled",
@@ -143,13 +144,13 @@ function _(e) {
 	return g[e].targetModuleIds.every((e) => h(e));
 }
 //#endregion
-//#region src/module/settings/is-optional-feature-enabled.ts
+//#region src/module/foundry/settings/is-optional-feature-enabled.ts
 function v(e) {
 	let t = g[e];
 	return _(e) && game?.settings.get("wfrp4e-compatibility-box", t.settingKey) !== !1;
 }
 //#endregion
-//#region src/functions/patches/paper-doll/equipment-update.ts
+//#region src/module/functions/patches/paper-doll/equipment-update.ts
 function de(e) {
 	return e.slotId === "MAIN_LEFT" ? "l" : e.slotId === "MAIN_RIGHT" ? "r" : null;
 }
@@ -165,7 +166,7 @@ function pe(e) {
 	return e === !0 ? { "system.equipped.value": !1 } : {};
 }
 //#endregion
-//#region src/functions/patches/paper-doll/is-item-allowed-in-slot.ts
+//#region src/module/functions/patches/paper-doll/is-item-allowed-in-slot.ts
 function me(e, t) {
 	switch (t) {
 		case "HEAD": return e.armourPoints.head > 0;
@@ -179,7 +180,7 @@ function he(e, t, n) {
 	return n === "MAIN_LEFT" || n === "MAIN_RIGHT" ? t?.type === "weapon" : n === "HEAD" || n === "BODY" || n === "GLOVES" || n === "BOOTS" ? t?.type === "armour" && me(t, n) : e !== "weapon" && e !== "armour";
 }
 //#endregion
-//#region src/module/patches/paper-doll/wfrp-runtime-types.ts
+//#region src/module/foundry/patches/paper-doll/wfrp-runtime-types.ts
 var ge = new Set([
 	"character",
 	"npc",
@@ -198,7 +199,7 @@ function _e(e) {
 	return y(e) ? typeof e.id == "string" && typeof e.name == "string" && typeof e.type == "string" && typeof e.update == "function" && typeof e.uuid == "string" : !1;
 }
 //#endregion
-//#region src/module/patches/paper-doll/wfrp-equipment.ts
+//#region src/module/foundry/patches/paper-doll/wfrp-equipment.ts
 var ve = [
 	"head",
 	"lArm",
@@ -274,7 +275,7 @@ async function De(e) {
 	Object.keys(t).length && await e.update(t);
 }
 //#endregion
-//#region src/module/notifications/notify-user.ts
+//#region src/module/foundry/notifications/notify-user.ts
 function Oe(e, t) {
 	t === void 0 ? console.error(e) : console.error(e, t);
 }
@@ -282,7 +283,7 @@ function ke(e, t) {
 	Oe(e, t), ui?.notifications?.error(e);
 }
 //#endregion
-//#region src/module/patches/paper-doll/report-paper-doll-error.ts
+//#region src/module/foundry/patches/paper-doll/report-paper-doll-error.ts
 function Ae(e) {
 	return e instanceof Error ? e.message : String(e);
 }
@@ -293,7 +294,7 @@ function T(e, t) {
 	e.catch((e) => w(t, e));
 }
 //#endregion
-//#region src/module/patches/paper-doll/synchronize-paper-doll.ts
+//#region src/module/foundry/patches/paper-doll/synchronize-paper-doll.ts
 var E = "fvtt-paper-doll-ui", je = "slots", D = /* @__PURE__ */ new Map(), Me = /* @__PURE__ */ new Set();
 function Ne(e) {
 	return Object.fromEntries(Object.entries(e).map(([e, t]) => [e, { ...t }]));
@@ -319,8 +320,8 @@ function Ie(e) {
 function Le(e) {
 	if (!b(e)) throw Error("Paper Doll synchronization requires a WFRP actor document.");
 }
-function Re() {
-	if (!game || game.system.id !== "wfrp4e") throw Error("Paper Doll synchronization is only available in a WFRP4e world.");
+function Re(e) {
+	if (!e || e.system.id !== "wfrp4e") throw Error("Paper Doll synchronization is only available in a WFRP4e world.");
 }
 async function ze(e) {
 	let t = Pe(e), n = Array.from(e.items), r = n.map(C).filter((e) => e !== null), i = new Set(r.map((e) => e.uuid)), a = n.map((e) => ({
@@ -330,7 +331,7 @@ async function ze(e) {
 	return oe(t, o) ? "unchanged" : (await e.setFlag(E, je, o), "synchronized");
 }
 async function O(e) {
-	Le(e), Re();
+	Le(e), Re(game);
 	let t = e;
 	if (!x(t) || game.modules.get("fvtt-paper-doll-ui")?.active !== !0 || !v("paperDoll")) return "unavailable";
 	let n = D.get(t.uuid);
@@ -346,10 +347,10 @@ function Be(e) {
 	})));
 }
 async function Ve() {
-	return Re(), Promise.all(Array.from(game.actors).filter(x).map(O));
+	return Re(game), Promise.all(Array.from(game.actors).filter(x).map(O));
 }
 //#endregion
-//#region src/module/settings/get-optional-feature-statuses.ts
+//#region src/module/foundry/settings/get-optional-feature-statuses.ts
 function He() {
 	return Object.entries(g).map(([e, t]) => ({
 		available: _(e),
@@ -360,7 +361,7 @@ function He() {
 	}));
 }
 //#endregion
-//#region src/functions/integrations/paper-doll-argon/bridge.ts
+//#region src/module/functions/integrations/paper-doll-argon/bridge.ts
 var Ue = ["TRINKET", "WRIST_RIGHT"];
 function We(e, t) {
 	let n = Number(e), r = Number(t);
@@ -398,7 +399,7 @@ function Je(e, t) {
 	return JSON.stringify(e) === JSON.stringify(t);
 }
 //#endregion
-//#region src/module/integrations/enhancedcombathud/constants.ts
+//#region src/module/foundry/integrations/enhancedcombathud/constants.ts
 var Ye = "enhancedcombathud", Xe = m, Ze = "enhancedcombathud-wfrp4e", Qe = "modules/wfrp4e-compatibility-box/templates/argon-actor-config.hbs", $e = "modules/enhancedcombathud/icons", et = [
 	"ws",
 	"bs",
@@ -447,7 +448,7 @@ var Ye = "enhancedcombathud", Xe = m, Ze = "enhancedcombathud-wfrp4e", Qe = "mod
 	}
 ];
 //#endregion
-//#region src/module/integrations/enhancedcombathud/refresh.ts
+//#region src/module/foundry/integrations/enhancedcombathud/refresh.ts
 async function rt() {
 	let e = ui?.ARGON;
 	if (e) {
@@ -456,7 +457,7 @@ async function rt() {
 	}
 }
 //#endregion
-//#region src/functions/patches/paper-doll/find-slot-changes.ts
+//#region src/module/functions/patches/paper-doll/find-slot-changes.ts
 function it(e, t, n) {
 	return e[t]?.[n] ?? null;
 }
@@ -477,7 +478,7 @@ function at(e, t) {
 	return r;
 }
 //#endregion
-//#region src/module/patches/paper-doll/enforce-paper-doll-equipped-state.ts
+//#region src/module/foundry/patches/paper-doll/enforce-paper-doll-equipped-state.ts
 var ot = Symbol.for("paper-doll-wfrp4e.equipped-state");
 function st() {
 	return globalThis.ui?.paperDoll?.prototype ?? null;
@@ -498,7 +499,8 @@ function ut() {
 }
 function dt() {
 	let e = st(), t = e?.equip, n = globalThis.fromUuid;
-	if (ct(e, t, n), e[ot] === !0) return;
+	if (ct(e, t, n), !n) throw Error("Foundry UUID resolution is unavailable.");
+	if (e[ot] === !0) return;
 	let r = t;
 	e.equip = async function(e, t, i) {
 		let a = await n(e);
@@ -522,7 +524,7 @@ function dt() {
 	}, e[ot] = !0;
 }
 //#endregion
-//#region src/module/patches/paper-doll/enforce-paper-doll-slot-types.ts
+//#region src/module/foundry/patches/paper-doll/enforce-paper-doll-slot-types.ts
 var ft = Symbol.for("paper-doll-wfrp4e.slot-type-filter");
 function pt() {
 	return globalThis.ui?.paperDoll?.prototype ?? null;
@@ -539,7 +541,7 @@ function ht() {
 	}, e[ft] = !0;
 }
 //#endregion
-//#region src/module/patches/paper-doll/register-slot-tooltips.ts
+//#region src/module/foundry/patches/paper-doll/register-slot-tooltips.ts
 var gt = ".paper-doll .paper-doll-slot", _t = `data-${m}-drag-tooltip`, k = `data-${m}-tooltip`, vt = `data-${m}-original-tooltip`, yt = {
 	HEAD: {
 		key: `${m}.SlotTooltip.Head`,
@@ -634,7 +636,7 @@ function kt() {
 	document.addEventListener("pointerover", Et, !0), document.addEventListener("dragstart", Dt, !0), document.addEventListener("dragend", Ot, !0);
 }
 //#endregion
-//#region src/module/patches/paper-doll/register-paper-doll-hooks.ts
+//#region src/module/foundry/patches/paper-doll/register-paper-doll-hooks.ts
 var A = /* @__PURE__ */ new Map();
 function j() {
 	return game?.system.id === "wfrp4e" && game.modules.get("fvtt-paper-doll-ui")?.active === !0 && v("paperDoll");
@@ -737,13 +739,13 @@ function Bt() {
 	});
 }
 //#endregion
-//#region src/module/integrations/fvtt-paper-doll-ui/register-integration.ts
+//#region src/module/foundry/integrations/fvtt-paper-doll-ui/register-integration.ts
 var Vt = "fvtt-paper-doll-ui";
 function Ht() {
 	h("fvtt-paper-doll-ui") && v("paperDoll") && Bt();
 }
 //#endregion
-//#region src/module/integrations/paper-doll-argon/bridge-runtime.ts
+//#region src/module/foundry/integrations/paper-doll-argon/bridge-runtime.ts
 var Ut = "activeWeaponSet", M = "slots", Wt = "weaponSets";
 function Gt(e) {
 	let t = e.getFlag(Vt, M);
@@ -807,7 +809,7 @@ async function Qt(e) {
 	return !x(e) || !v("paperDoll") || !v("argonCombatHud") || !v("paperDollArgonBridge") ? "unavailable" : e.getFlag("fvtt-paper-doll-ui", M) === void 0 ? (await rt(), "unchanged") : Yt(e, Gt(e));
 }
 //#endregion
-//#region src/functions/integrations/splatter/configuration.ts
+//#region src/module/functions/integrations/splatter/configuration.ts
 var $t = "details.species.value", en = "#a51414d8", tn = "#7e1717dc", nn = "#b31f18d8", rn = "#b01832d8", an = "#861a24d8", on = "#541e1ed8", N = "#6a0e0ed8", P = "#6f3518e0", F = "#621010e0", sn = "#771616dc", I = "#440707d8", L = "#14101490", R = "#0b080de8", cn = [
 	["Jabberslythe", "#78d61be8"],
 	["Chameleon Skink", N],
@@ -893,7 +895,7 @@ function fn(e, t = {}) {
 	return n;
 }
 //#endregion
-//#region src/module/integrations/splatter/constants.ts
+//#region src/module/foundry/integrations/splatter/constants.ts
 var z = "splatter", pn = "useBloodsheet", mn = "BloodSheetData", hn = "creatureType", gn = [
 	mn,
 	hn,
@@ -922,7 +924,7 @@ async function yn() {
 	};
 }
 //#endregion
-//#region src/functions/integrations/bossbar/health.ts
+//#region src/module/functions/integrations/bossbar/health.ts
 var B = {
 	currentHpPath: "status.wounds.value",
 	maxHpPath: "status.wounds.max",
@@ -945,7 +947,7 @@ function Cn(e) {
 	return (typeof e == "number" || typeof e == "string" && e.trim() !== "") && Number.isFinite(Number(e));
 }
 //#endregion
-//#region src/module/integrations/bossbar/constants.ts
+//#region src/module/foundry/integrations/bossbar/constants.ts
 var V = "bossbar", H = {
 	automatic: "bossBarAutomatic",
 	stacked: "bossBarStacked",
@@ -953,7 +955,7 @@ var V = "bossbar", H = {
 	prompt: "bossBarSetupPrompt"
 };
 //#endregion
-//#region src/module/integrations/bossbar/configuration.ts
+//#region src/module/foundry/integrations/bossbar/configuration.ts
 function U(e) {
 	return game?.i18n.localize(`wfrp4e-compatibility-box.BossBar.${e}`) ?? e;
 }
@@ -1060,7 +1062,7 @@ async function An(e, t, n, r) {
 	}
 }
 //#endregion
-//#region src/functions/wfrp/folders.ts
+//#region src/module/functions/wfrp/folders.ts
 function jn(e, t) {
 	return e.startsWith("wfrp4e-") && [...t].some((e) => /cubicle\s*7/i.test(e.name));
 }
@@ -1216,7 +1218,7 @@ async function Hn() {
 	game && await Bn(game, CONST.FOLDER_MAX_DEPTH);
 }
 //#endregion
-//#region src/module/api/create-module-api.ts
+//#region src/module/foundry/api/create-module-api.ts
 function Un() {
 	return {
 		configureBossBar: En,
@@ -1229,7 +1231,7 @@ function Un() {
 	};
 }
 //#endregion
-//#region src/module/api/register-module-api.ts
+//#region src/module/foundry/api/register-module-api.ts
 function Wn() {
 	if (!game) throw Error("Foundry game global is unavailable during module API registration.");
 	let e = game.modules.get(m);
@@ -1238,7 +1240,7 @@ function Wn() {
 	t.api = Un();
 }
 //#endregion
-//#region src/functions/integrations/bossbar/selection.ts
+//#region src/module/functions/integrations/bossbar/selection.ts
 function Gn(e) {
 	let t = e.filter((e) => e.enemy), n = (e, t) => e.traits.some((e) => e.trim().toLowerCase() === t), r = t.filter((e) => n(e, "boss"));
 	if (r.length) return r;
@@ -1248,7 +1250,7 @@ function Gn(e) {
 	return o.length <= 2 ? o : [];
 }
 //#endregion
-//#region src/module/integrations/bossbar/runtime.ts
+//#region src/module/foundry/integrations/bossbar/runtime.ts
 function Kn() {
 	return ui && Reflect.get(ui, "bossBar");
 }
@@ -1271,7 +1273,7 @@ function Jn(e) {
 	};
 }
 //#endregion
-//#region src/module/integrations/bossbar/combat.ts
+//#region src/module/foundry/integrations/bossbar/combat.ts
 var Yn = /* @__PURE__ */ new WeakSet();
 async function Xn(e) {
 	if (!game?.user?.isGM || !v("bossBar") || !game.settings.get("wfrp4e-compatibility-box", H.automatic) || !e.scene || Yn.has(e)) return;
@@ -1290,7 +1292,7 @@ async function Xn(e) {
 	}
 }
 //#endregion
-//#region src/module/integrations/bossbar/critical-segments.ts
+//#region src/module/foundry/integrations/bossbar/critical-segments.ts
 var Zn = "wfrp-bossbar-segments", Qn = "http://www.w3.org/2000/svg", $n = [
 	"background",
 	"bar",
@@ -1326,7 +1328,7 @@ function nr(e, t) {
 	return r.setAttribute("href", t), r.setAttribute("width", "7967"), r.setAttribute("height", "361"), n.append(r), n;
 }
 //#endregion
-//#region src/module/integrations/bossbar/wounds-bar.ts
+//#region src/module/foundry/integrations/bossbar/wounds-bar.ts
 function rr(e, t) {
 	let n = e.createElement("div");
 	n.className = `boss-bar-container ${t.type === 1 ? "matching-images" : "classic"} wfrp-bossbar-wounds`, n.style.setProperty("--bar-height", `${Math.max(4, t.barHeight * .3)}px`), n.style.setProperty("--bar-temp-color", t.tempBarColor), n.style.setProperty("--bar-temp-alpha", String(t.tempBarAlpha));
@@ -1353,7 +1355,7 @@ function ir(e, t) {
 	return e.find((e) => e.id === t) ?? e[0];
 }
 //#endregion
-//#region src/module/integrations/bossbar/display.ts
+//#region src/module/foundry/integrations/bossbar/display.ts
 function ar(e = Kn()) {
 	if (!e?.element || e.id !== "boss-bar") return;
 	let t = e.element;
@@ -1390,7 +1392,7 @@ function cr() {
 	}));
 }
 //#endregion
-//#region src/module/integrations/bossbar/settings.ts
+//#region src/module/foundry/integrations/bossbar/settings.ts
 function lr() {
 	if (game) {
 		for (let e of ["automatic", "stacked"]) game.settings.register(m, H[e], {
@@ -1444,7 +1446,7 @@ function ur(e) {
 	}), n.append(r), t.insertAdjacentElement("beforebegin", n);
 }
 //#endregion
-//#region src/module/integrations/bossbar/register-integration.ts
+//#region src/module/foundry/integrations/bossbar/register-integration.ts
 function dr() {
 	if (h("bossbar") && !(!v("bossBar") || game?.system.id !== "wfrp4e")) {
 		lr(), Hooks.once("ready", () => void On().catch(W)), Hooks.on("combatStart", (e) => void Xn(e).catch(W)), Hooks.on("renderBossBar", (e) => ar(e)), Hooks.on("renderSettingsConfig", (e, t) => {
@@ -1470,7 +1472,7 @@ function dr() {
 	}
 }
 //#endregion
-//#region src/functions/integrations/enhancedcombathud/argon-logic.ts
+//#region src/module/functions/integrations/enhancedcombathud/argon-logic.ts
 var fr = new Set([
 	"weapon",
 	"bite",
@@ -1588,7 +1590,7 @@ function Mr(e, t) {
 	}] : []).flat()];
 }
 //#endregion
-//#region src/module/settings/register-module-settings.ts
+//#region src/module/foundry/settings/register-module-settings.ts
 var Nr = "argonCombatItemPatterns", Pr = "*Draught*, *Potion*";
 function Fr(e, t) {
 	let n = g[t];
@@ -1618,7 +1620,7 @@ function Lr() {
 	Fr(game.settings, "argonCombatHud"), Fr(game.settings, "bossBar"), Fr(game.settings, "paperDoll"), Fr(game.settings, "paperDollArgonBridge"), Ir(game.settings);
 }
 //#endregion
-//#region src/module/integrations/enhancedcombathud/actor-flags.ts
+//#region src/module/foundry/integrations/enhancedcombathud/actor-flags.ts
 var Rr = [
 	"skillVisibility",
 	"spellVisibility",
@@ -1640,7 +1642,7 @@ async function Vr(e) {
 	Object.keys(t).length && await e.update(t);
 }
 //#endregion
-//#region src/module/integrations/enhancedcombathud/argon-helpers.ts
+//#region src/module/foundry/integrations/enhancedcombathud/argon-helpers.ts
 function Hr(e, t) {
 	if (typeof e != "object" || !e) throw Error(`${m} | ${t} must be an object.`);
 	return e;
@@ -1748,7 +1750,7 @@ function ai(e, t) {
 	return n === e ? t : n;
 }
 //#endregion
-//#region src/module/integrations/enhancedcombathud/buttons.ts
+//#region src/module/foundry/integrations/enhancedcombathud/buttons.ts
 function oi(e) {
 	let t = e.ARGON;
 	class n extends t.MAIN.BUTTONS.ItemButton {
@@ -1909,7 +1911,7 @@ function oi(e) {
 	};
 }
 //#endregion
-//#region src/module/integrations/enhancedcombathud/legacy-module-check.ts
+//#region src/module/foundry/integrations/enhancedcombathud/legacy-module-check.ts
 function si() {
 	let e = CONFIG.ARGON?.CORE?.CoreHud;
 	if (!e || typeof e.prototype.performModuleCheck != "function") throw Error("Argon CoreHud.performModuleCheck is unavailable.");
@@ -1919,7 +1921,7 @@ function si() {
 	};
 }
 //#endregion
-//#region src/functions/integrations/enhancedcombathud/movement.ts
+//#region src/module/functions/integrations/enhancedcombathud/movement.ts
 function ci(e, t) {
 	if (!Number.isFinite(e) || e < 0) throw Error(`Argon movement ${t} must be a finite, non-negative number.`);
 }
@@ -1939,7 +1941,7 @@ function di(e) {
 	return ci(e, "display distance"), Number.isInteger(e) ? String(e) : e.toFixed(1);
 }
 //#endregion
-//#region src/module/integrations/enhancedcombathud/panels.ts
+//#region src/module/foundry/integrations/enhancedcombathud/panels.ts
 function fi(e, t) {
 	let n = typeof e == "number" ? e : typeof e == "string" && e.trim() ? Number(e) : NaN;
 	if (!Number.isFinite(n)) throw Error(`WFRP actor movement ${t} must be numeric.`);
@@ -2096,7 +2098,7 @@ function mi(e) {
 	};
 }
 //#endregion
-//#region src/module/integrations/enhancedcombathud/weapon-sets.ts
+//#region src/module/foundry/integrations/enhancedcombathud/weapon-sets.ts
 function hi(e) {
 	let t = e.ARGON;
 	class n extends t.WeaponSets {
@@ -2143,7 +2145,7 @@ function hi(e) {
 	return n;
 }
 //#endregion
-//#region src/module/integrations/enhancedcombathud/register-integration.ts
+//#region src/module/foundry/integrations/enhancedcombathud/register-integration.ts
 function gi() {
 	h("enhancedcombathud") && v("argonCombatHud") && (si(), Hooks.on("argonInit", (e) => {
 		let { WFRPActionPanel: t } = oi(e), { WFRPDrawerPanel: n, WFRPMovementHud: r, WFRPPortraitPanel: i } = mi(e), a = hi(e);
@@ -2155,7 +2157,7 @@ function gi() {
 	}));
 }
 //#endregion
-//#region src/module/integrations/paper-doll-argon/panels.ts
+//#region src/module/foundry/integrations/paper-doll-argon/panels.ts
 function _i(e) {
 	let t = e.ARGON, { WFRPCombatItemButton: n } = oi(e);
 	class r extends t.MAIN.ActionPanel {
@@ -2169,7 +2171,7 @@ function _i(e) {
 	return { PaperDollQuickItemsPanel: r };
 }
 //#endregion
-//#region src/module/integrations/paper-doll-argon/report-bridge-error.ts
+//#region src/module/foundry/integrations/paper-doll-argon/report-bridge-error.ts
 function vi(e) {
 	return e instanceof Error ? e.message : String(e);
 }
@@ -2180,7 +2182,7 @@ function bi(e, t) {
 	e.catch((e) => yi(t, e));
 }
 //#endregion
-//#region src/module/integrations/paper-doll-argon/register-integration.ts
+//#region src/module/foundry/integrations/paper-doll-argon/register-integration.ts
 function xi() {
 	return v("paperDoll") && v("argonCombatHud") && v("paperDollArgonBridge");
 }
@@ -2189,12 +2191,13 @@ function Si(e, t) {
 }
 function Ci() {
 	h("fvtt-paper-doll-ui") && h("enhancedcombathud") && xi() && (Hooks.on("argonInit", (e) => {
+		if (!e || typeof e != "object" || !("defineMainPanels" in e) || typeof e.defineMainPanels != "function") throw Error("Argon main panel registration API is unavailable.");
 		let { PaperDollQuickItemsPanel: t } = _i(e);
 		e.defineMainPanels([t]);
 	}), Hooks.on("updateActor", Si));
 }
 //#endregion
-//#region src/module/integrations/splatter/configuration-menu.ts
+//#region src/module/foundry/integrations/splatter/configuration-menu.ts
 var wi = `${m}.Splatter.Configuration`;
 function Ti(e) {
 	return game?.i18n.localize(`${wi}.${e}`) ?? e;
@@ -2223,7 +2226,7 @@ function Oi() {
 	}
 }
 //#endregion
-//#region src/module/integrations/scene-packer/repair-mad-prefab-exclusions.ts
+//#region src/module/foundry/integrations/scene-packer/repair-mad-prefab-exclusions.ts
 var ki = /* @__PURE__ */ new WeakSet();
 function Ai(e) {
 	if (ki.has(e)) return !1;
@@ -2239,12 +2242,12 @@ function Ai(e) {
 	}, ki.add(e), !0;
 }
 //#endregion
-//#region src/module/integrations/scene-packer/register-integration.ts
+//#region src/module/foundry/integrations/scene-packer/register-integration.ts
 function ji() {
 	h("scene-packer") && game?.system.id === "wfrp4e" && typeof ScenePacker < "u" && Ai(ScenePacker);
 }
 //#endregion
-//#region src/module/integrations/fa-nexus/repair-forge-owner-detection.ts
+//#region src/module/foundry/integrations/fa-nexus/repair-forge-owner-detection.ts
 var Mi = /* @__PURE__ */ new WeakSet();
 function Ni(e, t) {
 	if (Mi.has(e)) return !1;
@@ -2255,7 +2258,7 @@ function Ni(e, t) {
 	}, Mi.add(e), !0;
 }
 //#endregion
-//#region src/module/integrations/fa-nexus/register-integration.ts
+//#region src/module/foundry/integrations/fa-nexus/register-integration.ts
 async function Pi() {
 	if (!h("fa-nexus") || game?.system.id !== "wfrp4e" || typeof ForgeAPI > "u") return;
 	let e = Array.from(document.querySelectorAll("script[type=\"module\"][src]")).find((e) => {
@@ -2278,7 +2281,7 @@ async function Pi() {
 	}
 }
 //#endregion
-//#region src/module/patches/wfrp4e/repair-data-model-migrations.ts
+//#region src/module/foundry/patches/wfrp4e/repair-data-model-migrations.ts
 var Fi = /* @__PURE__ */ new WeakSet();
 function Ii(e) {
 	let t = e.migrateData;
@@ -2291,13 +2294,13 @@ function Li() {
 	return [...Object.values(CONFIG.Actor.dataModels), ...Object.values(CONFIG.Item.dataModels)].reduce((e, t) => e + Number(Ii(t)), 0);
 }
 //#endregion
-//#region src/module/patches/wfrp4e/repair-roll-modes.ts
+//#region src/module/foundry/patches/wfrp4e/repair-roll-modes.ts
 function Ri() {
 	let e = game?.wfrp4e?.config, t = CONFIG.ChatMessage.modes;
 	return !e || !t ? !1 : (e.rollModes = foundry.utils.deepClone(t), !0);
 }
 //#endregion
-//#region src/functions/patches/wfrp4e/chat-card-references.ts
+//#region src/module/functions/patches/wfrp4e/chat-card-references.ts
 function Z(e) {
 	return typeof e == "object" && e ? e : {};
 }
@@ -2351,7 +2354,7 @@ function Vi(e) {
 	}
 }
 //#endregion
-//#region src/module/patches/wfrp4e/chat-card-text.ts
+//#region src/module/foundry/patches/wfrp4e/chat-card-text.ts
 function Hi(e) {
 	let t = new DOMParser().parseFromString(e, "text/html").body;
 	for (let e of t.querySelectorAll("script, style, template, button, input, select, textarea, .chat-button, a[data-action], [role='button'], .dice-tooltip, .applied-breakdown, .secret:not(.revealed), [hidden], [aria-hidden='true']")) e.remove();
@@ -2365,7 +2368,7 @@ function Ui(e) {
 	return t.textContent = e, t.style.whiteSpace = "pre-line", t;
 }
 //#endregion
-//#region src/module/patches/wfrp4e/render-orphaned-chat-cards.ts
+//#region src/module/foundry/patches/wfrp4e/render-orphaned-chat-cards.ts
 var Wi = /* @__PURE__ */ new WeakSet();
 function Gi(e) {
 	if (!game) return !1;
@@ -2401,7 +2404,7 @@ function qi() {
 	}, Wi.add(e), !0;
 }
 //#endregion
-//#region src/module/patches/wfrp4e/active-effect-schema.ts
+//#region src/module/foundry/patches/wfrp4e/active-effect-schema.ts
 function Ji(e) {
 	let t = e.schema;
 	if (t.fields.changes) return !1;
@@ -2415,7 +2418,7 @@ function Yi() {
 	return Object.values(CONFIG.ActiveEffect?.dataModels ?? {}).reduce((e, t) => e + Number(Ji(t)), 0);
 }
 //#endregion
-//#region src/module/patches/wfrp4e/guard-actorless-token-ruler.ts
+//#region src/module/foundry/patches/wfrp4e/guard-actorless-token-ruler.ts
 var Xi = /* @__PURE__ */ new WeakSet(), Zi = /* @__PURE__ */ new WeakSet();
 function Qi() {
 	let e = CONFIG.Token?.rulerClass?.prototype, t = foundry.canvas?.placeables?.tokens?.TokenRuler?.prototype;
@@ -2437,7 +2440,7 @@ function Qi() {
 	}, Xi.add(e), !0;
 }
 //#endregion
-//#region src/module/patches/wfrp4e/apply-compatibility-patches.ts
+//#region src/module/foundry/patches/wfrp4e/apply-compatibility-patches.ts
 function $i() {
 	game?.system.id === "wfrp4e" && (Ri(), Li(), Yi(), qi(), Qi());
 }
@@ -2502,7 +2505,7 @@ function aa() {
 	});
 }
 //#endregion
-//#region src/main.ts
+//#region src/module/init/index.ts
 aa();
 //#endregion
 
