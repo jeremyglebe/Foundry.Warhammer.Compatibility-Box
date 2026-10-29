@@ -2687,7 +2687,7 @@ async function tr(e) {
 async function W(e) {
 	$n(e), er(game);
 	let t = e;
-	if (!B(t) || game.modules.get("fvtt-paper-doll-ui")?.active !== !0 || !b("paperDoll")) return "unavailable";
+	if (!B(t) || !t.isOwner || game.modules.get("fvtt-paper-doll-ui")?.active !== !0 || !b("paperDoll")) return "unavailable";
 	let n = U.get(t.uuid);
 	if (n) return await n, W(t);
 	let r = tr(t).finally(() => {
@@ -2696,9 +2696,9 @@ async function W(e) {
 	return U.set(t.uuid, r), r;
 }
 function nr(e) {
-	B(e) && (Jn.has(e.uuid) || (Jn.add(e.uuid), queueMicrotask(() => {
+	!B(e) || !e.isOwner || Jn.has(e.uuid) || (Jn.add(e.uuid), queueMicrotask(() => {
 		Jn.delete(e.uuid), Kn(W(e), `could not synchronize equipped items for ${e.uuid}`);
-	})));
+	}));
 }
 async function rr() {
 	return er(game), Promise.all(Array.from(game.actors).filter(B).map(W));
@@ -3160,7 +3160,7 @@ function _i(e) {
 }
 async function vi(e) {
 	if (!z(e)) throw Error("Paper Doll–Argon synchronization requires a WFRP actor document.");
-	return !B(e) || !b("paperDoll") || !b("argonCombatHud") || !b("paperDollArgonBridge") ? "unavailable" : e.getFlag("fvtt-paper-doll-ui", ci) === void 0 ? (await yr(), "unchanged") : hi(e, di(e));
+	return B(e) ? e.isOwner ? !b("paperDoll") || !b("argonCombatHud") || !b("paperDollArgonBridge") ? "unavailable" : e.getFlag("fvtt-paper-doll-ui", ci) === void 0 ? (await yr(), "unchanged") : hi(e, di(e)) : (await yr(), "unavailable") : "unavailable";
 }
 //#endregion
 //#region src/module/foundry/integrations/splatter/configure-splatter.ts
@@ -4850,27 +4850,44 @@ function rs() {
 	}, ts.add(e), !0;
 }
 //#endregion
+//#region src/module/foundry/patches/wfrp4e/dual-wielder-cleanup.ts
+var is = /* @__PURE__ */ new WeakSet();
+function as() {
+	if (!game || !["10.0.3", "10.1.2"].includes(game.system.version)) return !1;
+	let e = CONFIG.Actor.documentClass;
+	if (typeof e != "function") return !1;
+	let t = e.prototype;
+	if (!R(t) || typeof t.getScripts != "function") return !1;
+	let n = t;
+	if (is.has(n)) return !1;
+	let r = n.getScripts;
+	return n.getScripts = function(e, ...t) {
+		let n = r.call(this, e, ...t);
+		return e === "startTurn" ? n.filter((e) => !(e.context?.effect?.statuses.has("dualwielder") && /^this\.effect\.delete\(\);?$/.test(e.script.trim()))) : n;
+	}, is.add(n), !0;
+}
+//#endregion
 //#region src/module/foundry/patches/wfrp4e/apply-compatibility-patches.ts
-function is() {
-	game?.system.id === "wfrp4e" && (Uo(), Ho(), es(), Qo(), rs());
+function os() {
+	game?.system.id === "wfrp4e" && (Uo(), Ho(), es(), Qo(), rs(), as());
 }
 //#endregion
 //#region src/module/wfrp/folders/hooks.ts
-var as, os = !1, ss = !1;
+var ss, cs = !1, ls = !1;
 function $() {
 	if (!(!game?.ready || !game.user?.isActiveGM)) {
-		if (os) {
-			ss = !0;
+		if (cs) {
+			ls = !0;
 			return;
 		}
-		clearTimeout(as), as = setTimeout(() => {
-			cs();
+		clearTimeout(ss), ss = setTimeout(() => {
+			us();
 		}, 1e3);
 	}
 }
-async function cs() {
-	if (!(!game?.ready || !game.user?.isActiveGM || os)) {
-		os = !0, ss = !1;
+async function us() {
+	if (!(!game?.ready || !game.user?.isActiveGM || cs)) {
+		cs = !0, ls = !1;
 		try {
 			await Ri();
 		} catch (e) {
@@ -4879,11 +4896,11 @@ async function cs() {
 				permanent: !0
 			});
 		} finally {
-			os = !1, ss && $();
+			cs = !1, ls && $();
 		}
 	}
 }
-function ls() {
+function ds() {
 	for (let e of [
 		"Folder",
 		"Actor",
@@ -4909,14 +4926,14 @@ function ls() {
 }
 //#endregion
 //#region src/module/hooks/register-module-hooks.ts
-function us() {
-	Hooks.once("setup", () => ji($)), ls(), Hooks.once("canvasInit", ze), Hooks.once("ready", ze), Hooks.once("init", () => {
-		is(), Wa(), Ce(), Me(), Io(), zo(), qi(), ya(), wo(), oi(), jo(), No();
+function fs() {
+	Hooks.once("setup", () => ji($)), ds(), Hooks.once("canvasInit", ze), Hooks.once("ready", ze), Hooks.once("init", () => {
+		os(), Wa(), Ce(), Me(), Io(), zo(), qi(), ya(), wo(), oi(), jo(), No();
 	});
 }
 //#endregion
 //#region src/module/init/index.ts
-us();
+fs();
 //#endregion
 
 //# sourceMappingURL=wfrp4e-compatibility-box.mjs.map
