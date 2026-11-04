@@ -37,11 +37,11 @@
         },
         "simpleCalendar": {
           "Name": "Enable Simple Calendar Reborn compatibility",
-          "Hint": "Offer the shared WFRP Imperial calendar preset and coordinate world time with Simple Timekeeping when enabled. Applying a preset requires GM review."
+          "Hint": "Use the shared WFRP Imperial calendar and coordinate world time and events with Simple Timekeeping when both are enabled. Review calendar setup and migration before applying changes."
         },
         "simpleTimekeeping": {
           "Name": "Enable Simple Timekeeping & Calendar compatibility",
-          "Hint": "Offer the shared WFRP Imperial calendar and fix years, weekdays and date picking when it is selected. Works alone or alongside Simple Calendar Reborn."
+          "Hint": "Use the shared WFRP Imperial calendar with native year labels and corrected weekdays. Synchronize time and events with Simple Calendar Reborn when both are enabled."
         }
       },
       "ArgonCombatItemPatterns": {
