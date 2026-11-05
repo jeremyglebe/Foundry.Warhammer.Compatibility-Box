@@ -4656,6 +4656,9 @@ var vo = {
 	migrationReturns: ["Actor/Item migration returns", "wfrp4e"],
 	effectSchema: ["Active Effect changes schema", "wfrp4e"],
 	orphanedChat: ["Orphaned chat-card fallback", "wfrp4e"],
+	journalCompendiumLinks: ["Journal compendium links", "wfrp4e"],
+	mapPinCompendiumLinks: ["Map pin compendium links", "wfrp4e"],
+	rollTableCompendiumLookup: ["Compendium lookup for chat table rolls", "wfrp4e"],
 	actorlessRuler: ["Actorless-token ruler guard", "wfrp4e"],
 	dualWielder: ["Dual Wielder turn-start cleanup", "wfrp4e"],
 	scenePacker: ["MAD prefab exclusions", "scene-packer"],
@@ -6278,31 +6281,250 @@ function tl() {
 	}, $c.add(e), !0;
 }
 //#endregion
+//#region src/module/foundry/patches/wfrp4e/official-compendiums.ts
+function nl(e, t) {
+	return [...e.packs.entries()].flatMap(([n, r]) => {
+		let i = r.metadata?.packageName;
+		if (r.documentName !== t || !r.visible || !i) return [];
+		let a = e.modules.get(i);
+		return i === "wfrp4e" || a?.active && Xa(i, a.authors ?? []) ? [{
+			key: n,
+			pack: r,
+			packageId: i
+		}] : [];
+	}).sort((e, t) => e.key.localeCompare(t.key));
+}
+function rl(e, t, n, r) {
+	let i = nl(e, t).filter(({ pack: e }) => e.index.has(n)), a = r?.pack?.split(".")[0] ?? Za(r?.flags ?? {}, r?._stats?.compendiumSource, new Set(i.map(({ packageId: e }) => e)));
+	return i.sort((e, t) => Number(t.packageId === a) - Number(e.packageId === a));
+}
+//#endregion
+//#region src/module/foundry/patches/wfrp4e/journal-compendium-links.ts
+var il = /^(Actor|Item|JournalEntry|RollTable|Scene|Macro|Playlist|Cards)\.([a-z\d]{16})((?:\.[a-z]+\.[a-z\d]{16})*)$/i, al = /* @__PURE__ */ new WeakSet();
+async function ol(e, t, n) {
+	let r = t.relativeTo, i = r?.documentName === "JournalEntryPage" ? r.parent : r;
+	if (i?.documentName !== "JournalEntry") return null;
+	let [, a, o, s = ""] = il.exec(n) ?? [];
+	if (!a || !o) return null;
+	for (let { pack: t } of rl(e, a, o, i)) {
+		let e = await foundry.utils.fromUuid(t.getUuid(o) + s);
+		if (e && t.visible) return e;
+	}
+	return null;
+}
+function sl() {
+	let e = CONFIG.ux?.TextEditor;
+	if (!e || typeof e._createContentLink != "function" || typeof e._embedContent != "function" || typeof e._parseEmbedConfig != "function" || typeof foundry.utils.fromUuid != "function" || al.has(e)) return !1;
+	let t = e._createContentLink, n = e._embedContent;
+	return e._createContentLink = async function(e, n = {}) {
+		let r = await t.call(this, e, n);
+		if (!game || !r.matches("a.content-link.broken")) return r;
+		let [, i, a, o, s] = e;
+		return a ? (await ol(game, n, i === "UUID" ? a : `${i}.${a}`))?.toAnchor({
+			name: s,
+			dataset: { hash: o }
+		}) ?? r : r;
+	}, e._embedContent = async function(e, t = {}) {
+		let r = await n.call(this, e, t), i = e.groups?.config;
+		if (!game || !i || !r?.matches("p.broken.content-embed")) return r;
+		let a = this._parseEmbedConfig(i, { relative: t.relativeTo });
+		if (!a.uuid) return r;
+		let o = await ol(game, t, a.uuid);
+		return o ? await o.toEmbed({
+			label: e.groups?.label,
+			...a,
+			uuid: o.uuid
+		}, t) ?? r : r;
+	}, al.add(e), !0;
+}
+//#endregion
+//#region src/module/foundry/patches/wfrp4e/map-pin-compendium-links.ts
+var cl = /* @__PURE__ */ new WeakSet();
+function ll() {
+	let t = CONFIG.Note?.documentClass?.prototype, n = CONFIG.Note?.objectClass?.prototype;
+	if (!t || !n || cl.has(t) || typeof foundry.utils.fromUuid != "function") return !1;
+	let r = Object.getOwnPropertyDescriptor(t, "entry"), i = n._draw;
+	if (!r?.get || typeof i != "function") return !1;
+	let a = r.get, o = /* @__PURE__ */ new WeakMap(), s = /* @__PURE__ */ new Map();
+	function c(e) {
+		let t = s.get(e);
+		return t || (t = foundry.utils.fromUuid(e).finally(() => s.delete(e)), s.set(e, t)), t;
+	}
+	async function l(e) {
+		o.delete(e);
+		let { entryId: t, pageId: n } = e;
+		if (!(!game || !t || a.call(e))) for (let { pack: r } of rl(game, "JournalEntry", t, e.parent)) {
+			let i = await c(r.getUuid(t));
+			if (e.entryId !== t || e.pageId !== n) return;
+			if (!(!i?.pages || !r.visible || n && !i.pages.get(n))) {
+				o.set(e, {
+					entryId: t,
+					pageId: n,
+					journal: i,
+					pack: r
+				});
+				return;
+			}
+		}
+	}
+	return Object.defineProperty(t, "entry", {
+		...r,
+		get() {
+			let e = a.call(this);
+			if (e) return e;
+			let t = o.get(this);
+			return t?.pack.visible && t.entryId === this.entryId && t.pageId === this.pageId ? t.journal : e;
+		}
+	}), n._draw = async function(t) {
+		try {
+			await l(this.document);
+		} catch (t) {
+			console.warn(`${e} | Could not resolve map pin ${this.document.entryId}.`, t);
+		}
+		return i.call(this, t);
+	}, Hooks.on("updateNote", (t, n) => {
+		!n || typeof n != "object" || ("entryId" in n || "pageId" in n) && t.object?.draw().catch((t) => {
+			console.error(`${e} | Could not redraw the updated map pin.`, t);
+		});
+	}), cl.add(t), !0;
+}
+//#endregion
+//#region src/module/foundry/patches/wfrp4e/roll-table-compendium-lookup.ts
+var ul = new Set([
+	"menu",
+	"scatter",
+	"hitloc"
+]), dl = ["flags.wfrp4e.key", "flags.wfrp4e.column"], fl = /* @__PURE__ */ new WeakSet(), pl = /* @__PURE__ */ new WeakMap();
+function ml(e) {
+	let t = pl.get(e);
+	return t || (t = e.getIndex({ fields: dl }).finally(() => pl.delete(e)), pl.set(e, t)), t;
+}
+function hl(e, t, n) {
+	return e.settings.get("wfrp4e", "tableSettings")?.[n ? `${t}-${n}` : t]?.split(",").filter(Boolean) ?? [];
+}
+function gl(e) {
+	return e.getFlag("wfrp4e", "column");
+}
+function _l(e, t, n) {
+	let r = e.find((e) => (n(e) || null) === (t || null));
+	if (r) return [r];
+	if (t) return [];
+	let i = /* @__PURE__ */ new Map();
+	for (let t of e) {
+		let e = n(t);
+		e && !i.has(e) && i.set(e, t);
+	}
+	return [...i.values()];
+}
+function vl(e) {
+	let t = e[0];
+	return t && e.length > 1 ? {
+		name: t.name.split("-")[0].trim(),
+		columns: e
+	} : t;
+}
+function yl(e, t, n, r) {
+	let i = hl(e, n, r), a = i.length > 1 ? i.map((t) => e.tables.get(t)) : [], o = a.includes(void 0);
+	if (!o) return {
+		stale: o,
+		table: t.findTable(n, r)
+	};
+	let s = a.filter((e) => e !== void 0);
+	return {
+		stale: o,
+		table: vl(_l(s.length ? s : [...e.tables].filter((e) => e.getFlag("wfrp4e", "key") === n), r, gl))
+	};
+}
+async function bl(e, t, n) {
+	let r = nl(e, "RollTable").sort((e, t) => Number(t.packageId === "wfrp4e-core") - Number(e.packageId === "wfrp4e-core")), i = (await Promise.all(r.map(async ({ pack: e }) => ({
+		pack: e,
+		index: await ml(e)
+	})))).filter(({ pack: e }) => e.visible).map(({ pack: e, index: t }) => [...t].map((t) => ({
+		pack: e,
+		id: t._id,
+		name: t.name,
+		key: t.flags?.wfrp4e?.key,
+		column: t.flags?.wfrp4e?.column
+	}))), a = hl(e, t, n), o = a.length ? a : n ? hl(e, t, null) : [];
+	if (o.length) {
+		let e = i.flat(), t = o.flatMap((t) => {
+			let r = e.find((e) => e.id === t && (!n || a.length > 0 || e.column === n));
+			return r ? [r] : [];
+		}), r = n && t.length > 1 ? _l(t, n, (e) => e.column) : t;
+		if (r.length) return r;
+	}
+	for (let e of i) {
+		let r = _l(e.filter((e) => e.key === t), n, (e) => e.column);
+		if (r.length) return r;
+	}
+	return [];
+}
+function xl() {
+	let e = game?.wfrp4e?.tables;
+	if (!e || fl.has(e) || typeof e.formatChatRoll != "function" || typeof e.findTable != "function" || typeof e.generalizeTable != "function" || typeof foundry.utils.fromUuid != "function") return !1;
+	let t = e.formatChatRoll;
+	e.formatChatRoll = async function(e, n, r) {
+		if (!game) return t.call(this, e, n, r);
+		let i = this.generalizeTable(e);
+		if (ul.has(i)) return t.call(this, e, n, r);
+		let a = game, o = yl(a, this, i, r);
+		if (o.table && !o.stale) return t.call(this, e, n, r);
+		let s = o.table ? [] : await bl(a, i, r), c = vl((await Promise.all(s.map(async ({ pack: e, id: t }) => {
+			if (!e.visible) return null;
+			let n = await foundry.utils.fromUuid(e.getUuid(t));
+			return e.visible ? n : null;
+		}))).filter((e) => e !== null));
+		if (!c && !o.stale) return t.call(this, e, n, r);
+		let l = yl(a, this, i, r).table ?? c, u = Object.create(this);
+		return u.findTable = (e, t) => e === i && (t ?? null) === (r ?? null) ? l : this.findTable(e, t), t.call(u, e, n, r);
+	};
+	let n = CONFIG.TextEditor?.enrichers.find(({ pattern: e }) => e.source.startsWith("@Table\\["));
+	if (n) {
+		let t = n.enricher;
+		n.enricher = async function(n, r) {
+			let [i, a] = n[1]?.split(",") ?? [];
+			if (!game || !i || n[2]) return t.call(this, n, r);
+			let o = e.generalizeTable(i), s = yl(game, e, o, null).table, c = s || ul.has(o) ? [] : await bl(game, o, null), l = s?.name ?? (c.length > 1 ? c[0]?.name.split("-")[0]?.trim() : c[0]?.name) ?? i, u = document.createElement("a");
+			u.className = "action-link", Object.assign(u.dataset, {
+				action: "clickTable",
+				table: i,
+				modifier: a || "0"
+			});
+			let d = document.createElement("i");
+			return d.className = "fas fa-list", u.append(d, l), u;
+		};
+	}
+	return fl.add(e), !0;
+}
+//#endregion
 //#region src/module/foundry/patches/wfrp4e/dual-wielder-cleanup.ts
-var nl = /* @__PURE__ */ new WeakSet(), rl = ["10.0.3", "10.1.2"];
-function il() {
-	if (!game || !rl.includes(game.system.version)) return !1;
+var Sl = /* @__PURE__ */ new WeakSet(), Cl = ["10.0.3", "10.1.2"];
+function wl() {
+	if (!game || !Cl.includes(game.system.version)) return !1;
 	let e = CONFIG.Actor.documentClass;
 	if (typeof e != "function") return !1;
 	let t = e.prototype;
 	if (!W(t) || typeof t.getScripts != "function") return !1;
 	let n = t;
-	if (nl.has(n)) return !1;
+	if (Sl.has(n)) return !1;
 	let r = n.getScripts;
 	return n.getScripts = function(e, ...t) {
 		let n = r.call(this, e, ...t);
 		return e === "startTurn" ? n.filter((e) => !(e.context?.effect?.statuses.has("dualwielder") && /^this\.effect\.delete\(\);?$/.test(e.script.trim()))) : n;
-	}, nl.add(n), !0;
+	}, Sl.add(n), !0;
 }
 //#endregion
 //#region src/module/foundry/patches/wfrp4e/apply-compatibility-patches.ts
-function al() {
+function Tl() {
 	if (game?.system.id !== "wfrp4e") {
 		for (let e of [
 			"rollModes",
 			"migrationReturns",
 			"effectSchema",
 			"orphanedChat",
+			"journalCompendiumLinks",
+			"mapPinCompendiumLinks",
+			"rollTableCompendiumLookup",
 			"actorlessRuler",
 			"dualWielder"
 		]) J(e, "inactive", "Requires a WFRP4e world.");
@@ -6322,33 +6544,42 @@ function al() {
 	}) : J("effectSchema", "unavailable", "Active Effect data-model registry is unavailable or empty."), Y("orphanedChat", Xc, "Text fallback installed for chat cards with missing actor/token references.", {
 		status: "unavailable",
 		detail: "The chat document renderer is unavailable."
+	}), Y("journalCompendiumLinks", sl, "Compendium fallback installed for missing journal links and embeds.", {
+		status: "unavailable",
+		detail: "Foundry's text enrichment or UUID resolution API is unavailable."
+	}), Y("mapPinCompendiumLinks", ll, "Compendium fallback installed for map pins with missing world journals.", {
+		status: "unavailable",
+		detail: "Foundry's map note or UUID resolution API is unavailable."
+	}), Y("rollTableCompendiumLookup", xl, "Compendium fallback installed for WFRP chat table rolls.", {
+		status: "unavailable",
+		detail: "WFRP's chat table or Foundry's UUID resolution API is unavailable."
 	});
 	let t = CONFIG.Token?.rulerClass?.prototype === foundry.canvas?.placeables?.tokens?.TokenRuler?.prototype;
 	Y("actorlessRuler", tl, "Core-style fallback installed for tokens without actors.", {
 		status: t && CONFIG.Token?.rulerClass ? "not-needed" : "unavailable",
 		detail: t && CONFIG.Token?.rulerClass ? "The world uses Foundry's core ruler." : "The expected WFRP/core ruler methods are unavailable."
-	}), rl.includes(game.system.version) ? Y("dualWielder", il, "Duplicate status deletion filtered; the unique GM retains turn-start cleanup.", {
+	}), Cl.includes(game.system.version) ? Y("dualWielder", wl, "Duplicate status deletion filtered; the unique GM retains turn-start cleanup.", {
 		status: "unavailable",
 		detail: "Actor script collection is unavailable."
 	}) : J("dualWielder", "unsupported", "Cleanup is verified for WFRP 10.0.3 and 10.1.2; inspect this version before enabling.");
 }
 //#endregion
 //#region src/module/wfrp/folders/hooks.ts
-var ol, sl = !1, cl = !1;
+var El, Dl = !1, Ol = !1;
 function $() {
 	if (!(!game?.ready || !game.user?.isActiveGM)) {
-		if (sl) {
-			cl = !0;
+		if (Dl) {
+			Ol = !0;
 			return;
 		}
-		clearTimeout(ol), ol = setTimeout(() => {
-			ll();
+		clearTimeout(El), El = setTimeout(() => {
+			kl();
 		}, 1e3);
 	}
 }
-async function ll() {
-	if (!(!game?.ready || !game.user?.isActiveGM || sl)) {
-		sl = !0, cl = !1;
+async function kl() {
+	if (!(!game?.ready || !game.user?.isActiveGM || Dl)) {
+		Dl = !0, Ol = !1;
 		try {
 			await lo();
 		} catch (e) {
@@ -6357,11 +6588,11 @@ async function ll() {
 				permanent: !0
 			});
 		} finally {
-			sl = !1, cl && $();
+			Dl = !1, Ol && $();
 		}
 	}
 }
-function ul() {
+function Al() {
 	for (let e of [
 		"Folder",
 		"Actor",
@@ -6387,14 +6618,14 @@ function ul() {
 }
 //#endregion
 //#region src/module/hooks/register-module-hooks.ts
-function dl() {
-	ce(), Do(), Hooks.once("setup", () => to($)), ul(), Hooks.once("canvasInit", Zt), Hooks.once("ready", Zt), Hooks.once("init", () => {
-		al(), Ds(), Bt(), ze(), Ht(), Ze(), Nt(), bc(), So("forgeOwner", Cc()), Mc(), Fc(), ko(), ns(), cc(), Aa(), hc(), _c();
+function jl() {
+	ce(), Do(), Hooks.once("setup", () => to($)), Al(), Hooks.once("canvasInit", Zt), Hooks.once("ready", Zt), Hooks.once("init", () => {
+		Tl(), Ds(), Bt(), ze(), Ht(), Ze(), Nt(), bc(), So("forgeOwner", Cc()), Mc(), Fc(), ko(), ns(), cc(), Aa(), hc(), _c();
 	});
 }
 //#endregion
 //#region src/module/init/index.ts
-dl();
+jl();
 //#endregion
 
 //# sourceMappingURL=wfrp4e-compatibility-box.mjs.map
