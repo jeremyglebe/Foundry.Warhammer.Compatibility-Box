@@ -32,7 +32,7 @@ https://github.com/jeremyglebe/Foundry.Warhammer.Compatibility-Box/releases/late
 ## Compatibility
 
 - Package ID: `wfrp4e-compatibility-box`
-- Package version: `1.4.0`
+- Package version: `1.5.0`
 - Foundry VTT: minimum 14, verified 14
 - Required system: wfrp4e 9.6.1
 

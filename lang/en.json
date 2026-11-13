@@ -49,6 +49,12 @@
         "Ignore": "Keep My Settings and Ignore",
         "Later": "Ask Next Time",
         "Dismissal": "Keep My Settings and Ignore disables future setup prompts for this package in this world. You can turn prompts back on in Compatibility Box settings. Ask Next Time or closing this dialog postpones the check until the next startup."
+      },
+      "ImportedContent": {
+        "keepImportedContentTidy": {
+          "Name": "Keep Compatibility Box Imported Content Tidy?",
+          "Hint": "Group documents imported from Compatibility Box's own compendiums, such as the Compatibility Guide and career trapping items, under a Drowsy's WFRP4e Compatibility Box folder in each world directory. Disabling leaves the current folders in place."
+        }
       }
     },
     "SlotTooltip": {
